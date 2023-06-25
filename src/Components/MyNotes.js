@@ -5,7 +5,9 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 
+
 function MyNotes() {
+
   
   return (
     <MainScreen
@@ -40,7 +42,7 @@ function MyNotes() {
           </AccordionSummary>
           <AccordionDetails>
             <div className="card-body">
-              <h4 class="badge text-bg-success"> Category </h4>
+              <h4 className="badge text-bg-success"> Category </h4>
               <blockquote className="blockquote mb-0">
                 <p>content</p>
                 <footer className="blockquote-footer pt-4">

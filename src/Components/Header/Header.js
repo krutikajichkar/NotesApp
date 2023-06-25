@@ -1,8 +1,14 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link,  useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
+//import { logOut } from "../../Firebase";
 
 function Header() {
+  const navigate = useNavigate();
+//   const handleLogout = async() => {
+//     await logOut();
+//     navigate('/login')
+//  }
   return (
     <div className=" shadow-gray-500 ">
       <nav className="bg-cyan-600 h-14 flex items-center p-10 justify-between fixed left-0 right-0 z-50">
@@ -34,26 +40,26 @@ function Header() {
                 <li>My Notes</li>
               </Link>
 
-              <div class="dropdown">
+              <div className="dropdown">
                 <button
-                  class=" dropdown-toggle"
+                  className=" dropdown-toggle"
                   type="button"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
                   Profile
                 </button>
-                <ul class="dropdown-menu">
+                <ul className="dropdown-menu">
                   <Link to="profile">
-                    <button class="dropdown-item" type="button">
+                    <button className="dropdown-item" type="button">
                       My Profile
                     </button>
                   </Link>
-                  <li>
-                    <button class="dropdown-item" type="button">
+                  {/* <li>
+                    <button className="dropdown-item" type="button" onClick={handleLogout}>
                       Logout
                     </button>
-                  </li>
+                  </li> */}
                 </ul>
               </div>
             </ul>
@@ -83,9 +89,9 @@ function Header() {
                 </a>
               </li>
               <li>
-                <a className="dropdown-item" href="/">
+                {/* <a className="dropdown-item" href="/" onClick={handleLogout}>
                   LogOut
-                </a>
+                </a> */}
               </li>
             </ul>
           </div>
