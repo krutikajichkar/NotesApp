@@ -13,21 +13,7 @@ function Login() {
 
   const emailRef = useRef();
   const passRef = useRef();
-  //const navigate = useNavigate();
 
-  // const handleLogin = async() =>{
-  // try{
-  //   await signIn(emailRef.current.value,passRef.current.value).then((response) => {
-  //     alert("Logged In successfully");
-  //     navigate("/mynotes");
-  //    });
-    
-  // }
-  // catch(e){
-  //   alert(e.message)
-  // }
-
-  // }
 
  
 

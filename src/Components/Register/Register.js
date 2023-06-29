@@ -1,9 +1,7 @@
 import React, { useState ,useRef} from "react";
 import MainScreen from "../MainScreen";
-//import { db, signUp} from "../../Firebase";
 import { useNavigate } from "react-router-dom";
-//import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
-//import { addDoc, collection } from "firebase/firestore";
+
 
 function Register() {
   const [email, setEmail] = useState('');
@@ -15,26 +13,6 @@ function Register() {
   //const navigate = useNavigate();
 
   const handleRegister = async() => {
-    // createUserWithEmailAndPassword(auth,emailRef.current.value,passRef.current.value).then((response) => {
-    //   addDoc(collection(db,"userData"),{
-    //     name:name,
-    //     email:email,
-    //     password:password,
-    //     uid:response.uid
-    //   });
-    //   alert("registered successfully");
-    //   navigate("/login");
-    // }).catch((error) => {
-    //   alert(error.message)
-    // });
-    ///////////////
-  //  try{
-  //   await signUp(emailRef.current.value,passRef.current.value);
-  //   alert("Registered successfully");
-  //  }
-  //  catch(e){
-  //   alert(e.message)
-  //  }
   }
 
   return (

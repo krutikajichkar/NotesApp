@@ -8,6 +8,7 @@ import Register from "./Components/Register/Register";
 import Login from "./Components/Login/Login"
 import Profile from "./Components/Profile";
 import CreateNote from "./Components/CreateNote";
+import EditNotes from "./Components/EditNotes";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/mynotes/createnote" element={<CreateNote/>}/>
+            <Route path="/mynotes/editnotes" element={<EditNotes/>}/>
           </Routes>
         </div>
         <Footer/>

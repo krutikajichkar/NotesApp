@@ -1,19 +1,21 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Card from "react-bootstrap/Card";
 import MainScreen from "./MainScreen";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import supabase from "../config/SupabaseClient";
 import { useNavigate } from "react-router-dom";
-//import Success from "./popups/Success"; 
 
-const CreateNote = () => {
+const EditNotes = () => {
+    const [notes, setNotes] = useState([]);
   const [validated, setValidated] = useState(false);
-  const [title, setTitle] = useState();
-  const [content, setContent] = useState();
-  const [category, setCategory] = useState();
-  const [fetchError, setfetchError] = useState(null);
+  const [title, setTitle] = useState(notes[0]?.title);
+  const [content, setContent] = useState(notes[0]?.content);
+  const [category, setCategory] = useState("");
+  
+  //const [fetchError, setfetchError] = useState(null);
   const navigate = useNavigate();
+  const id = localStorage.getItem("editId");
 
   const handleSubmit = (event) => {
     const form = event.currentTarget;
@@ -23,30 +25,54 @@ const CreateNote = () => {
     }
 
     setValidated(true);
-    insertData();
-    alert("Created note Successfully!!");
-    navigate('/mynotes');
-
+    alert("Edited note Successfully!!");
+    navigate("/mynotes");
   };
 
-  const insertData = async() => {
-    const {error} = await supabase
-    .from('notes')
-    .insert({title:title , content:content , category:category})
+  const fetchData = async () => {
+    const { data, error } = await supabase
+      .from("notes")
+      .select("*")
+      .eq("id", id);
 
-    if(error){
-      fetchError(error);
+    if (error) {
+      console.log(error);
     }
-  }
 
-  const resetHandler = () => {
-    setCategory('');
-    setContent('');
-    setTitle('')
-  }
+    if (data && data.length > 0) {
+        setNotes(data);
+        const note = data[0];
+        setTitle(note.title);
+        setCategory(note.category);
+        setContent(note.content);
+      }
+    console.log(localStorage.getItem("editId"), title);
+  };
+
+  const editHandler = async () => {
+    const { data, error } = await supabase
+      .from("notes")
+      .update({  title:title,  content:content,  category:category })
+      .eq("id", id)
+      .select()
+
+      if(error){
+        console.log(error.message)
+      }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  // const resetHandler = () => {
+  //   setCategory('');
+  //   setContent('');
+  //   setTitle('')
+  // }
   return (
-    <MainScreen title="Create Notes Here..." className="pt-[100px] container">
-      {fetchError && (<p>{fetchError}</p>)}
+    <MainScreen title="Edit Notes Here..." className="pt-[100px] container">
+      {/* {fetchError && (<p>{fetchError}</p>)} */}
       <Card>
         <Card.Header>Create a Note</Card.Header>
         <Card.Body>
@@ -88,21 +114,22 @@ const CreateNote = () => {
               </Form.Group>
 
               <div className="flex ">
-                <button className="bg-blue-500 text-white px-3 py-2 rounded-lg ">
-                  Create
-                </button>
-                <button className="bg-red-500 text-white px-3 py-2 rounded-lg mx-3" onClick={resetHandler}>
-                  Reset Fields
+                <button
+                  className="bg-blue-500 text-white px-3 py-2 rounded-lg "
+                  onClick={editHandler}
+                >
+                  Edit
                 </button>
               </div>
             </Row>
           </Form>
-          
         </Card.Body>
-        <Card.Footer className="italic">Created at {new Date().toDateString()}</Card.Footer>
+        <Card.Footer className="italic">
+          Created at {new Date().toDateString()}
+        </Card.Footer>
       </Card>
     </MainScreen>
   );
 };
 
-export default CreateNote;
+export default EditNotes;

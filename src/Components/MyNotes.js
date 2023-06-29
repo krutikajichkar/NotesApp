@@ -1,14 +1,60 @@
-import React  from "react";
+import React ,{useState,useEffect} from "react";
 import MainScreen from "./MainScreen";
 import { Link } from "react-router-dom";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
+import supabase from "../config/SupabaseClient";
 
 
 function MyNotes() {
 
+  // const [title, setTitle] = useState();
+  // const [content, setContent] = useState();
+  // const [category, setCategory] = useState();
   
+  const [notes, setNotes] = useState([]);
+  const [fetcherror, setFetcherror] = useState();
+  const [clicked, setClicked] = useState(false);
+  
+
+  const fetchData = async () => {
+    let { data  , error} = await supabase
+    .from('notes')
+    .select('*')
+
+    if(error){
+      setFetcherror(error);
+      setNotes(null);
+    }
+
+    if(data){
+      setNotes(data);
+      setFetcherror(null);
+    }
+
+    console.log(data)
+  }
+
+  const deleteHandler = async(id) => {
+  const { error} = await supabase
+  .from('notes')
+  .delete()
+  .eq('id',id)
+
+  setClicked(true);
+  console.log("deletee is clicked with id ",id)
+  console.log(error)
+  }
+
+  const editHandler = (id) => {
+    localStorage.setItem('editId',id);
+  }
+
+  useEffect (() => {
+    fetchData();
+  },[clicked])
+
   return (
     <MainScreen
       title="Welcome Back Krutika Jichkar..."
@@ -21,38 +67,46 @@ function MyNotes() {
       </Link>
 
      <div className=" pb-2">
-        <Accordion >
-          <AccordionSummary
-            aria-controls="panel1a-content"
-            id="panel1a-header "
-          >
-            <div className="card w-[100%] ">
-              <div className="flex justify-between card-header items-center ">
-                <div>title</div>
-                <div className="flex space-x-2 ">
-                  <button className="text-white rounded bg-green-600 p-2 font-semibold">
-                    Edit
-                  </button>
-                  <button className="text-white rounded bg-red-600 p-2 font-semibold">
-                    Delete
-                  </button>
+       {fetcherror && (<p>{fetcherror}</p>)}
+       {notes && (
+        notes.map((ele) => {
+          return(
+            <Accordion key={ele.id} >
+            <AccordionSummary
+              aria-controls="panel1a-content"
+              id="panel1a-header "
+            >
+              <div className="card w-[100%] ">
+                <div className="flex justify-between card-header items-center ">
+                  <div>{ele.title}</div>
+                  <div className="flex space-x-2 ">
+                   <Link to='editnotes'> <button className="text-white rounded bg-green-600 p-2 font-semibold" onClick={() => editHandler(ele.id)}>
+                      Edit
+                    </button></Link>
+                    <button className="text-white rounded bg-red-600 p-2 font-semibold" onClick={() => deleteHandler(ele.id)}>
+                      Delete
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </AccordionSummary>
-          <AccordionDetails>
-            <div className="card-body">
-              <h4 className="badge text-bg-success"> Category </h4>
-              <blockquote className="blockquote mb-0">
-                <p>content</p>
-                <footer className="blockquote-footer pt-4">
-                  Created on some date
-                  {/* <cite title="Source Title">Source Title</cite> */}
-                </footer>
-              </blockquote>
-            </div>
-          </AccordionDetails>
-        </Accordion>
+            </AccordionSummary>
+            <AccordionDetails>
+              <div className="card-body">
+                <h4 className="badge text-bg-success"> {ele.category} </h4>
+                <blockquote className="blockquote mb-0">
+                  <p>{ele.content}</p>
+                  <footer className="blockquote-footer pt-4">
+                    Created on {new Date(ele.created_at).toDateString()}
+                    {/* <cite title="Source Title">Source Title</cite> */}
+                  </footer>
+                </blockquote>
+              </div>
+            </AccordionDetails>
+          </Accordion>
+          )
+        })
+
+       )}
       </div>
     </MainScreen>
   );
