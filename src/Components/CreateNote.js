@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import Card from "react-bootstrap/Card";
 import MainScreen from "./MainScreen";
 import Form from "react-bootstrap/Form";
@@ -13,30 +13,48 @@ const CreateNote = () => {
   const [content, setContent] = useState();
   const [category, setCategory] = useState();
   const [fetchError, setfetchError] = useState(null);
+  const [user_id, setuser_id] = useState(null)
   const navigate = useNavigate();
 
   const handleSubmit = (event) => {
+    event.preventDefault()
+    
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
     }
-
     setValidated(true);
-    insertData();
-    alert("Created note Successfully!!");
-    navigate('/mynotes');
 
   };
 
+
+
+  const getUser = async() => {
+    const {data} = await supabase.auth.getUser();
+
+    if(data){
+      console.log(data.user.id)
+      setuser_id(data.user.id)
+    }
+  }
+
   const insertData = async() => {
-    const {error} = await supabase
+    const { error} = await supabase
     .from('notes')
-    .insert({title:title , content:content , category:category})
+    .insert({title:title , content:content , category:category, userID: user_id})
+
+    alert("Created note Successfully!!");
+    navigate('/mynotes');
 
     if(error){
       fetchError(error);
     }
+   
+  }
+
+  if(validated){
+    insertData()
   }
 
   const resetHandler = () => {
@@ -44,6 +62,10 @@ const CreateNote = () => {
     setContent('');
     setTitle('')
   }
+
+  useEffect(() => {
+    getUser()
+  },[])
   return (
     <MainScreen title="Create Notes Here..." className="pt-[100px] container">
       {fetchError && (<p>{fetchError}</p>)}

@@ -2,6 +2,8 @@ import React, {  useState,useRef } from "react";
 import MainScreen from "../MainScreen";
 //import { signIn } from "../../Firebase";
 import { useNavigate } from "react-router-dom";
+import supabase from "../../config/SupabaseClient";
+import Header from "../Header/Header";
 
 //import Error from "../popups/Error";
 
@@ -10,16 +12,34 @@ import { useNavigate } from "react-router-dom";
 function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  
+  const navigate = useNavigate()
+  
+const handleSubmit = async(e) => {
+e.preventDefault();
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: email,
+    password: password,
+  })
 
-  const emailRef = useRef();
-  const passRef = useRef();
+  if(data){
+    console.log(data);
+    
+    navigate('/mynotes')
+  }
 
+  if(error){
+    alert(error.message)
+  }
+  
+}
 
  
 
   return (
+  <>
     <MainScreen title="Login" className=" container">
-      <form>
+      <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="exampleInputEmail1" className="form-label">
             Email address
@@ -29,7 +49,7 @@ function Login() {
             className="form-control"
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
-            ref={emailRef}
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
         </div>
@@ -43,18 +63,19 @@ function Login() {
             className="form-control"
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
-            ref={passRef}
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
 
-        {/* <div>
-          <button className="btn btn-primary" onClick={handleLogin}>Submit</button>
-        </div> */}
+        <div>
+          <button className="btn btn-primary" >Submit</button>
+        </div>
 
         <div>New Customer ? Register Here</div>
       </form>
     </MainScreen>
+  </>
   );
 }
 

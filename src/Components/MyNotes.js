@@ -5,6 +5,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import supabase from "../config/SupabaseClient";
+import Header from "./Header/Header";
 
 
 function MyNotes() {
@@ -16,12 +17,15 @@ function MyNotes() {
   const [notes, setNotes] = useState([]);
   const [fetcherror, setFetcherror] = useState();
   const [clicked, setClicked] = useState(false);
+  const [userName, setuserName] = useState('')
+  const [user_id, setuser_id] = useState(null)
   
 
-  const fetchData = async () => {
+  const fetchData = async (user_id) => {
     let { data  , error} = await supabase
     .from('notes')
     .select('*')
+    .eq('userID' , user_id)
 
     if(error){
       setFetcherror(error);
@@ -29,11 +33,13 @@ function MyNotes() {
     }
 
     if(data){
+      
       setNotes(data);
+     
       setFetcherror(null);
     }
 
-    console.log(data)
+    //console.log(data)
   }
 
   const deleteHandler = async(id) => {
@@ -51,13 +57,32 @@ function MyNotes() {
     localStorage.setItem('editId',id);
   }
 
+  const getUser = async() => {
+    const { data } = await supabase.auth.getUser();
+
+    const { user } = data;
+    const {user_metadata , id} = user;
+
+    if (user_metadata) {
+      setuserName(user_metadata.full_name)
+      console.log(user_metadata);
+    }
+
+    if(id){
+      setuser_id(id);
+    }
+   
+  }
+
   useEffect (() => {
-    fetchData();
-  },[clicked])
+    fetchData(user_id);
+    getUser();
+  },[clicked,user_id])
 
   return (
+   <>
     <MainScreen
-      title="Welcome Back Krutika Jichkar..."
+      title= {`Welcome Back ${userName}...`}
       className="pt-[100px] container"
     >
       <Link to="createnote">
@@ -67,7 +92,7 @@ function MyNotes() {
       </Link>
 
      <div className=" pb-2">
-       {fetcherror && (<p>{fetcherror}</p>)}
+       {/* {fetcherror && (<p>{fetcherror}</p>)} */}
        {notes && (
         notes.map((ele) => {
           return(
@@ -109,6 +134,7 @@ function MyNotes() {
        )}
       </div>
     </MainScreen>
+   </>
   );
 }
 
