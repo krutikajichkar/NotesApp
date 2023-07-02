@@ -4,15 +4,19 @@ import { useNavigate } from "react-router-dom";
 import supabase from "../../config/SupabaseClient";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
+import { getuser } from "../../config/user";
+import {v4 as uuidv4} from 'uuid';
+import { useUser } from "@supabase/auth-helpers-react";
 
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [validated, setValidated] = useState(false);
-  const [user_id, setuser_id] = useState("");
+
   const [selectedFile, setselectedFile] = useState("");
-  const [avatarURL, setavatarURL] = useState("");
+ 
+  
 
   const navigate = useNavigate();
 
@@ -30,18 +34,16 @@ function Register() {
     }
   };
 
-  const uploadFiles = async () => {
+  const uploadFiles = async (id) => {
    
-    if (selectedFile && email) {
+    if (selectedFile) {
       const { data, error } = await supabase.storage
       .from("avatars")
-      .upload( `${email}/${selectedFile.name}`, selectedFile);
+      .upload( id + "/" + uuidv4(), selectedFile);
 
       if (data) {
         console.log(data);
-        console.log(user_id, selectedFile);
-        setavatarURL(data)
-
+        console.log(selectedFile);
       }
       if (error) {
         console.log(error.message);
@@ -50,19 +52,7 @@ function Register() {
   };
 
 
-  const getMedia = async () => {
-    const { data, error } = await supabase.storage
-      .from("avatars")
-      .download(`${email}/${selectedFile.name}`);
 
-      if(data){
-        console.log(data);
-      }
-
-      if(error){
-        console.log(error.message)
-      }
-  };
   // const fileHandler = async (e) => {
   //   const file = e.target.files[0];
   //   setselectedFile(file);
@@ -70,56 +60,33 @@ function Register() {
   // };
 
   const createUser = async () => {
-    try {
-      
+   
       const { data, error } = await supabase.auth.signUp({
         email: email,
         password: password,
         options: {
           data: {
             full_name: name,
-            avatar_url : avatarURL,
           },
         },
       });
-      if (error) {
-        alert(error.message);
-      }
+      
       if (data) {
         console.log(data);
-        uploadFiles();
+        const {user} = data;
+        if(user){
+         
+          console.log(user.id);
+          uploadFiles(user.id);
+        }
         alert("Registered Successfully ");
         navigate("/login");
       }
-      // Move addId() call here
-    } catch (error) {
-      alert(error.message);
-    }
-  };
-
-  const getUser = async () => {
-    const { data } = await supabase.auth.getUser();
-
-    if (data) {
-      const { user } = data;
-      if (user) {
-        const { id ,user_metadata} = user;
-
-        if (id) {
-          setuser_id(id);
-          console.log(id);
-        }
-        if(user_metadata){
-          setavatarURL(user_metadata.avatar_url)
-        }
+      else{
+        alert(error.message)
       }
-    }
-  };
-
-  useEffect(() => {
-    getUser();
-    getMedia();
-  }, [user_id]);
+    } 
+  
 
   return (
     <>
