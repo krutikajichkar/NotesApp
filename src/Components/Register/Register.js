@@ -1,41 +1,84 @@
-import React, { useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import MainScreen from "../MainScreen";
 import { useNavigate } from "react-router-dom";
 import supabase from "../../config/SupabaseClient";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
-import Header from "../Header/Header";
 
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [validated, setValidated] = useState(false);
-  const [userId, setuserId] = useState()
+  const [user_id, setuser_id] = useState("");
+  const [selectedFile, setselectedFile] = useState("");
+  const [avatarURL, setavatarURL] = useState("");
 
   const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
-      event.preventDefault();
       event.stopPropagation();
-    }
+    } else {
+      setValidated(true);
+      createUser();
 
-    setValidated(true);
-    createUser();
-    addId();
+      //getUser()
+     
+    }
   };
+
+  const uploadFiles = async () => {
+   
+    if (selectedFile && email) {
+      const { data, error } = await supabase.storage
+      .from("avatars")
+      .upload( `${email}/${selectedFile.name}`, selectedFile);
+
+      if (data) {
+        console.log(data);
+        console.log(user_id, selectedFile);
+        setavatarURL(data)
+
+      }
+      if (error) {
+        console.log(error.message);
+      }
+    }
+  };
+
+
+  const getMedia = async () => {
+    const { data, error } = await supabase.storage
+      .from("avatars")
+      .download(`${email}/${selectedFile.name}`);
+
+      if(data){
+        console.log(data);
+      }
+
+      if(error){
+        console.log(error.message)
+      }
+  };
+  // const fileHandler = async (e) => {
+  //   const file = e.target.files[0];
+  //   setselectedFile(file);
+  //   console.log(selectedFile);
+  // };
 
   const createUser = async () => {
     try {
+      
       const { data, error } = await supabase.auth.signUp({
         email: email,
         password: password,
         options: {
           data: {
             full_name: name,
+            avatar_url : avatarURL,
           },
         },
       });
@@ -44,55 +87,42 @@ function Register() {
       }
       if (data) {
         console.log(data);
+        uploadFiles();
+        alert("Registered Successfully ");
+        navigate("/login");
       }
-      alert("Registered Successfully ");
-      navigate('/login')
-      setuserId(data.user.id);
-      console.log(userId)
+      // Move addId() call here
     } catch (error) {
       alert(error.message);
     }
   };
 
-  const addId = async() => {
-    const {error} = await supabase
-    .from('notes')
-    .insert({userId : userId})
+  const getUser = async () => {
+    const { data } = await supabase.auth.getUser();
 
-    if(error){
-      alert(error.message)
+    if (data) {
+      const { user } = data;
+      if (user) {
+        const { id ,user_metadata} = user;
+
+        if (id) {
+          setuser_id(id);
+          console.log(id);
+        }
+        if(user_metadata){
+          setavatarURL(user_metadata.avatar_url)
+        }
+      }
     }
-  }
+  };
 
-  // const handleRegister = async (email,password,e) => {
-  //    e.preventDefault();
-  // try{
-  //   const { data, error } = await supabase.auth.signInWithPassword({
-  //     email: email,
-  //     password: password,
-  //   });
-
-  //   if (data) {
-  //     console.log(data);
-  //     alert("Registered successfully!");
-  //       navigate('/login');
-  //   }
-  //   if (error) {
-  //     console.log(error.message);
-  //     alert(error.message);
-  //   }
-
-  //   console.log(data);
-  // }
-  // catch(e){
-  //   alert.log(e.message)
-  // }
-
-  // };
+  useEffect(() => {
+    getUser();
+    getMedia();
+  }, [user_id]);
 
   return (
     <>
-      
       <MainScreen title="Register Here..." className="pt-[100px]">
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
           <Row className="mb-3">
@@ -127,6 +157,17 @@ function Register() {
                 placeholder="Enter the Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+              />
+              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="formFile">
+              <Form.Label>Profile Picture</Form.Label>
+              <Form.Control
+                required
+                type="file"
+                placeholder="Choose a File"
+                onChange={(e) => setselectedFile(e.target.files[0])}
+                //onChange={fileHandler}
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>

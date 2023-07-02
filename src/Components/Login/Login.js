@@ -1,9 +1,9 @@
-import React, {  useState,useRef } from "react";
+import React, {  useState } from "react";
 import MainScreen from "../MainScreen";
 //import { signIn } from "../../Firebase";
 import { useNavigate } from "react-router-dom";
 import supabase from "../../config/SupabaseClient";
-import Header from "../Header/Header";
+
 
 //import Error from "../popups/Error";
 

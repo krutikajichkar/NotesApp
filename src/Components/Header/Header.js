@@ -4,9 +4,11 @@ import MenuIcon from "@mui/icons-material/Menu";
 import supabase from "../../config/SupabaseClient";
 //import { logOut } from "../../Firebase";
 
-function Header({isSignedIn , setisSignedIn}) {
-  const [currUser, setCurrUser] = useState(null);
+function Header() {
+  const [user_id, setUser_id] = useState(null);
   const navigate = useNavigate();
+  const [currUser, setcurrUser] = useState(null)
+
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -16,7 +18,7 @@ function Header({isSignedIn , setisSignedIn}) {
     alert("Logged out Successfully");
    
     navigate("/");
-    setCurrUser(null);
+    setcurrUser(null);
   };
 
   const getUser = async () => {
@@ -24,8 +26,9 @@ function Header({isSignedIn , setisSignedIn}) {
 
     const { user } = data;
     if (user) {
-      setCurrUser(user);
+      setcurrUser(user);
       console.log(user);
+      setUser_id(user.id)
     }
   };
 
@@ -33,7 +36,7 @@ function Header({isSignedIn , setisSignedIn}) {
 
   useEffect(() => {
     getUser();
-  }, [currUser]);
+  }, [user_id]);
 
   return (
     <div className=" shadow-gray-500 ">

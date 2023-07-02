@@ -24,7 +24,10 @@ const CreateNote = () => {
       event.preventDefault();
       event.stopPropagation();
     }
-    setValidated(true);
+    else{
+      setValidated(true);
+      insertData()
+    }
 
   };
 
@@ -53,9 +56,7 @@ const CreateNote = () => {
    
   }
 
-  if(validated){
-    insertData()
-  }
+  
 
   const resetHandler = () => {
     setCategory('');
@@ -65,7 +66,8 @@ const CreateNote = () => {
 
   useEffect(() => {
     getUser()
-  },[])
+   
+  },[user_id])
   return (
     <MainScreen title="Create Notes Here..." className="pt-[100px] container">
       {fetchError && (<p>{fetchError}</p>)}
