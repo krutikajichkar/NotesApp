@@ -3,7 +3,9 @@ import MainScreen from "./MainScreen";
 import { Form, Row } from "react-bootstrap";
 import supabase from "../config/SupabaseClient";
 import { getuser } from "../config/user";
-import { v4 as uuidv4 } from "uuid";
+
+
+
 
 const CDN =
   "https://vipfgltyzdlvkveoojpr.supabase.co/storage/v1/object/public/avatars/";
@@ -17,16 +19,17 @@ function Profile() {
   const [profileUrl, setprofileUrl] = useState();
   const user = getuser();
 
+  const timestamp = new Date().getTime();
+
   const handleSubmit = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
     } else {
       setValidated(true);
-      updateUser()
-      
+      updateUser();
     }
   };
 
@@ -47,30 +50,29 @@ function Profile() {
     }
   };
 
- 
- 
-
-  async function call() {
+  const call = async() => {
     await user.then((response) => {
       console.log(response.id);
-      getMedia(response.id);
+     
       setid(response.id);
-      console.log(id)
+      console.log(id);
       setEmail(response.email);
-      console.log(email)
+      console.log(email);
       setName(response.user_metadata.full_name);
-      console.log(name)
-      
+      console.log(name);
     });
   }
 
-  const updateProfile = async (id ) => {
+  
+
+  const updateProfile = async (id) => {
+    console.log(profileUrl,profile[0].name)
     if (profileUrl) {
       const { data, error } = await supabase.storage
         .from("avatars")
-        .update(id + "/" + uuidv4(), profileUrl,{
-          cacheControl: '3600',
-          upsert: true
+        .update(id + "/" + profile[0].name, profileUrl, {
+          cacheControl: "3600",
+          upsert: true,
         });
 
       if (data) {
@@ -86,28 +88,24 @@ function Profile() {
   const updateUser = async () => {
     const { data, error } = await supabase.auth.updateUser({
       email: email,
-      options: {
-        data: {
-          full_name: name,
-        },
-      },
+      password: password,
+      data: { full_name: name },
     });
-    if(data){
-      console.log(data)
+
+    if (data) {
+      console.log(data);
       updateProfile(id);
-      alert("profile updated successfully")
-      
-    }
-    else{
-      console.log(error.message)
+      alert("profile updated successfully");
+    } else {
+      console.log(error.message);
     }
   };
-
 
   useEffect(() => {
     call();
     console.log(CDN + id + "/" + profile[0]?.name);
     console.log(id);
+    getMedia(id);
   }, [id]);
 
   return (
@@ -171,7 +169,7 @@ function Profile() {
           </Form>
         </div>
         <div className="w-[300px] h-[300px] ">
-          <img src={CDN + id + "/" + profile[0]?.name} alt="profile_img" />
+          <img src={CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp} alt="profile_img" />
         </div>
       </div>
     </MainScreen>
