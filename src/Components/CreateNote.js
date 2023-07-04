@@ -17,6 +17,7 @@ const CreateNote = () => {
   const [fetchError, setfetchError] = useState(null);
   const [message, setMessage] = useState()
   const [user_id, setuser_id] = useState(null);
+ 
 
   const navigate = useNavigate();
 
@@ -39,6 +40,7 @@ const CreateNote = () => {
     if (data) {
       console.log(data.user.id);
       setuser_id(data.user.id);
+     
     }
   };
 
@@ -58,12 +60,13 @@ const CreateNote = () => {
       setfetchError(error.message);
     }
     else{
-      setMessage("Created note Successfully!!");
-      navigate("/mynotes");
+      setfetchError(null)
+      setMessage("Created note Successfully!! You can check them on My Notes OR If you want to ccreate another one , You can");
     }
   };
 
   const resetHandler = () => {
+    setMessage(null)
     setCategory("");
     setContent("");
     setTitle("");

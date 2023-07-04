@@ -76,6 +76,7 @@ function Register() {
         
       }
       setMessage("Registered Successfully ");
+      alert("Registered Successfully")
       navigate('/login')
     } else {
       setError(error.message);

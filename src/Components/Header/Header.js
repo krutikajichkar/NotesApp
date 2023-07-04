@@ -12,10 +12,10 @@ const CDN =
 
 function Header() {
   const navigate = useNavigate();
-  const user = getuser();
   const [id, setid] = useState(null)
+  const user = getuser();
   const [profile, setProfile] = useState()
-
+  const [curruser, setCurruser] = useState()
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -31,6 +31,7 @@ function Header() {
     user.then((response) => {
        setid(response.id);
        console.log(id , response.id)
+       setCurruser(response)
     })
     .catch((error) => {
       console.log(error.message)
@@ -64,7 +65,7 @@ function Header() {
       <nav className="bg-cyan-600 h-14 flex items-center p-10 justify-between fixed left-0 right-0 z-50">
         <h1 className="text-white text-2xl font-bold">Notes Zipper</h1>
         <div className="flex space-x-12 items-center">
-          {!id && <div className="flex space-x-6">
+          {!curruser  && <div className="flex space-x-6">
             <Link to="register">
               <button className="text-cyan-600 px-4 pt-2 pb-2 rounded-3xl font-semibold bg-white ">
                 SignUp

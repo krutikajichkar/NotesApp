@@ -34,9 +34,7 @@ function MyNotes() {
       setFetcherror(error);
       setNotes(null);
     }
-
-    if(data){
-      
+    else {
       setNotes(data);
       setLoading(false);
       setFetcherror(null);
@@ -100,7 +98,7 @@ function MyNotes() {
 
      <div className=" pb-2">
        {/* {fetcherror && (<p>{fetcherror}</p>)} */}
-       {notes && (
+       {notes && notes.length > 0 &&
         notes.map((ele) => {
           return(
             <Accordion key={ele.id} >
@@ -138,7 +136,7 @@ function MyNotes() {
           )
         })
 
-       )}
+       }
       </div>
       {notes && notes.length===0 && <div className="absolute top-[50%] left-[40%] translate-[-50%,-50%]">
              <h3 className="text-[30px] font-semibold">No Notes Found !!</h3>

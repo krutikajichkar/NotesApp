@@ -19,7 +19,6 @@ function Profile() {
   const [profileUrl, setprofileUrl] = useState();
   const [message, setMessage] = useState();
   const [error, setError] = useState();
-
   const user = getuser();
 
   const timestamp = new Date().getTime();
