@@ -3,17 +3,15 @@ import MainScreen from "../MainScreen";
 //import { signIn } from "../../Firebase";
 import { Link, useNavigate } from "react-router-dom";
 import supabase from "../../config/SupabaseClient";
-
-
-//import Error from "../popups/Error";
+import Error from "../popups/Error";
 
 //import MyNotes from "../MyNotes";
 
 function Login() {
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-
-
+  const [error, setError] = useState()
+   
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -23,14 +21,13 @@ function Login() {
       password: password,
     });
 
-    if (data) {
-      console.log(data);
-      localStorage.setItem("loggedIn", true);
-      navigate("/mynotes");
+    if (data.user) {
+      console.log(data); 
+      navigate('/mynotes')  
     }
-
-    if (error) {
-      alert(error.message);
+    else  {
+      setError(error.message);
+      console.log(error.message)
     }
   };
 
@@ -38,6 +35,8 @@ function Login() {
     <>
    
       <MainScreen title="Login" className=" container">
+       {error && <Error error={error}/>}
+       
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
             <label htmlFor="exampleInputEmail1" className="form-label">

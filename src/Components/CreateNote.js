@@ -6,7 +6,8 @@ import Row from "react-bootstrap/Row";
 import supabase from "../config/SupabaseClient";
 import { useNavigate } from "react-router-dom";
 import Header from "./Header/Header";
-//import Success from "./popups/Success";
+import Success from "./popups/Success";
+import Error from "./popups/Error";
 
 const CreateNote = () => {
   const [validated, setValidated] = useState(false);
@@ -14,6 +15,7 @@ const CreateNote = () => {
   const [content, setContent] = useState();
   const [category, setCategory] = useState();
   const [fetchError, setfetchError] = useState(null);
+  const [message, setMessage] = useState()
   const [user_id, setuser_id] = useState(null);
 
   const navigate = useNavigate();
@@ -23,8 +25,8 @@ const CreateNote = () => {
 
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
-      event.preventDefault();
       event.stopPropagation();
+      setfetchError("Please fill the required details")
     } else {
       setValidated(true);
       insertData();
@@ -50,11 +52,14 @@ const CreateNote = () => {
         userID: user_id,
       });
 
-    alert("Created note Successfully!!");
-    navigate("/mynotes");
+   
 
     if (error) {
-      fetchError(error);
+      setfetchError(error.message);
+    }
+    else{
+      setMessage("Created note Successfully!!");
+      navigate("/mynotes");
     }
   };
 
@@ -71,7 +76,8 @@ const CreateNote = () => {
     <>
       <Header />
       <MainScreen title="Create Notes Here..." className="pt-[100px] container">
-        {fetchError && <p>{fetchError}</p>}
+        {fetchError && <Error error={fetchError}/>}
+        {message && <Success message={message}/>}
         <Card>
           <Card.Header>Create a Note</Card.Header>
           <Card.Body>

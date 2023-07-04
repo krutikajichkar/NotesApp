@@ -4,10 +4,8 @@ import { Form, Row } from "react-bootstrap";
 import supabase from "../config/SupabaseClient";
 import { getuser } from "../config/user";
 import Header from "./Header/Header";
-
-
-
-
+import Success from "./popups/Success";
+import Error from "./popups/Error";
 
 const CDN =
   "https://vipfgltyzdlvkveoojpr.supabase.co/storage/v1/object/public/avatars/";
@@ -20,8 +18,8 @@ function Profile() {
   const [profile, setprofile] = useState([]);
   const [profileUrl, setprofileUrl] = useState();
   const [message, setMessage] = useState();
- 
-  
+  const [error, setError] = useState();
+
   const user = getuser();
 
   const timestamp = new Date().getTime();
@@ -32,6 +30,7 @@ function Profile() {
     if (form.checkValidity() === false) {
       event.preventDefault();
       event.stopPropagation();
+      setError("Please fill all the details");
     } else {
       setValidated(true);
       updateUser();
@@ -50,15 +49,17 @@ function Profile() {
     if (data) {
       console.log(data);
       setprofile(data);
+      setError(null);
     } else {
+      setError(error.message);
       console.log(error.message);
     }
   };
 
-  const call = async() => {
+  const call = async () => {
     await user.then((response) => {
       console.log(response.id);
-     
+
       setid(response.id);
       console.log(id);
       setEmail(response.email);
@@ -66,12 +67,10 @@ function Profile() {
       setName(response.user_metadata.full_name);
       console.log(name);
     });
-  }
-
-  
+  };
 
   const updateProfile = async (id) => {
-    console.log(profileUrl,profile[0].name)
+    console.log(profileUrl, profile[0].name);
     if (profileUrl) {
       const { data, error } = await supabase.storage
         .from("avatars")
@@ -83,15 +82,18 @@ function Profile() {
       if (data) {
         console.log(data);
         console.log(profileUrl);
-      }
-      if (error) {
+        setError(null);
+      } else {
+        setError(error.message);
         console.log(error.message);
       }
     }
   };
 
   const updateUser = async () => {
-    setMessage("Updating profile....")
+    setMessage(
+      "Updating profile.... (This could take a bit longer,Please stay with us)"
+    );
     const { data, error } = await supabase.auth.updateUser({
       email: email,
       password: password,
@@ -101,10 +103,12 @@ function Profile() {
     if (data) {
       console.log(data);
       alert("profile updated successfully");
-      updateProfile(id);
-      window.location.reload()
-      
+      setError(null);
+      updateProfile(id).then((response) => {
+        window.location.reload();
+      });
     } else {
+      setError(error.message);
       console.log(error.message);
     }
   };
@@ -117,75 +121,84 @@ function Profile() {
   }, [id]);
 
   return (
-   <>
- 
-   <Header />
-  <MainScreen title="Edit Profile" className="mt-[100px] container">
-    {message && <p>{message}</p>}
-      <div className="flex justify-between">
-        <div>
-          <Form noValidate validated={validated} onSubmit={handleSubmit}>
-            <Row className="mb-3">
-              <Form.Group className="mb-3" controlId="validationCustom01">
-                <Form.Label>Name</Form.Label>
-                <Form.Control
-                  required
-                  type="text"
-                  placeholder="Title"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group className="mb-3" controlId="validationCustom01">
-                <Form.Label>Email Address</Form.Label>
-                <Form.Control
-                  required
-                  type="email"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group className="mb-3" controlId="validationCustom01">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                  required
-                  type="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-              </Form.Group>
-              <Form.Group className="mb-3" controlId="formFile">
-                <Form.Label>Change Profile Picture</Form.Label>
-                <Form.Control
-                  required
-                  type="file"
-                  placeholder="Update Profile"
-                  onChange={(e) => setprofileUrl(e.target.files[0])}
-                />
-                <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-              </Form.Group>
-              <div>
-                <button
-                  className="px-4 py-3 bg-blue-500 text-white rounded-lg"
-                  type="submit"
-                >
-                  Update
-                </button>
-              </div>
-            </Row>
-          </Form>
+    <>
+      <Header />
+      <MainScreen title="Edit Profile" className="mt-[100px] container">
+        {error && <Error error={error} />}
+        {message && <Success message={message} />}
+        <div className="flex-col  justify-between">
+          <center>
+            {" "}
+            <div className="w-[300px] h-[300px]">
+              <img
+                className="rounded-xl"
+                src={
+                  CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp
+                }
+                alt="profile_img"
+              />
+            </div>
+          </center>
+          <div className="mt-[-80px]">
+            <Form noValidate validated={validated} onSubmit={handleSubmit}>
+              <Row className="mb-3">
+                <Form.Group className="mb-3" controlId="validationCustom01">
+                  <Form.Label>Name</Form.Label>
+                  <Form.Control
+                    required
+                    type="text"
+                    placeholder="Title"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  />
+                  <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                </Form.Group>
+                <Form.Group className="mb-3" controlId="validationCustom01">
+                  <Form.Label>Email Address</Form.Label>
+                  <Form.Control
+                    required
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                </Form.Group>
+                <Form.Group className="mb-3" controlId="validationCustom01">
+                  <Form.Label>Password</Form.Label>
+                  <Form.Control
+                    required
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                </Form.Group>
+                <Form.Group className="mb-3" controlId="formFile">
+                  <Form.Label>Change Profile Picture</Form.Label>
+                  <Form.Control
+                    required
+                    type="file"
+                    placeholder="Update Profile"
+                    onChange={(e) => setprofileUrl(e.target.files[0])}
+                  />
+                  <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+                </Form.Group>
+                <div className="text-center">
+                  <button
+                    className="px-4 py-2 bg-blue-500 text-white rounded-lg"
+                    type="submit"
+                  >
+                    Update
+                  </button>
+                </div>
+              </Row>
+            </Form>
+          </div>
         </div>
-        <div className="w-[300px] h-[300px]">
-          <img className="rounded-xl" src={CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp} alt="profile_img" />
-        </div>
-      </div>
-    </MainScreen>
-   </>
+      </MainScreen>
+    </>
   );
 }
 

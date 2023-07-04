@@ -1,9 +1,9 @@
 import React from 'react'
 import Alert from 'react-bootstrap/Alert';
-function Success() {
+function Success({message}) {
   return (
     <Alert variant='success'>
-        Hey I am alert
+       {message}
     </Alert>
   )
 }

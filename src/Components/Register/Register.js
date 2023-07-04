@@ -6,14 +6,18 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
+import Error from "../popups/Error";
+import Success from "../popups/Success"
+
 
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [validated, setValidated] = useState(false);
- 
   const [selectedFile, setselectedFile] = useState("");
+  const [error, setError] = useState()
+  const [message, setMessage] = useState()
 
   const navigate = useNavigate();
 
@@ -41,7 +45,7 @@ function Register() {
         console.log(selectedFile);
       }
       if (error) {
-        console.log(error.message);
+        setError(error.message)
       }
     }
   };
@@ -71,10 +75,10 @@ function Register() {
         uploadFiles(user.id);
         
       }
-      alert("Registered Successfully ");
+      setMessage("Registered Successfully ");
       navigate('/login')
     } else {
-      alert(error.message);
+      setError(error.message);
     }
   };
 
@@ -82,6 +86,8 @@ function Register() {
     <>
     
       <MainScreen title="Register Here..." className="pt-[100px]">
+        {error && <Error error={error}/>}
+        {message && <Success message={message}/>}
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
           <Row className="mb-3">
             <Form.Group className="mb-3" controlId="validationCustom01">

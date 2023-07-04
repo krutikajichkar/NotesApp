@@ -10,7 +10,7 @@ const timestamp = new Date().getTime();
 const CDN =
   "https://vipfgltyzdlvkveoojpr.supabase.co/storage/v1/object/public/avatars/";
 
-function Header({show}) {
+function Header() {
   const navigate = useNavigate();
   const user = getuser();
   const [id, setid] = useState(null)
@@ -64,7 +64,7 @@ function Header({show}) {
       <nav className="bg-cyan-600 h-14 flex items-center p-10 justify-between fixed left-0 right-0 z-50">
         <h1 className="text-white text-2xl font-bold">Notes Zipper</h1>
         <div className="flex space-x-12 items-center">
-         { !id && ( <div className="flex space-x-6">
+          {!id && <div className="flex space-x-6">
             <Link to="register">
               <button className="text-cyan-600 px-4 pt-2 pb-2 rounded-3xl font-semibold bg-white ">
                 SignUp
@@ -75,7 +75,7 @@ function Header({show}) {
                 Login
               </button>
             </Link>
-          </div>)}
+          </div>}
           
           {/* {id && (
             <div>
@@ -89,7 +89,7 @@ function Header({show}) {
           {/* Large Screen */}
           <div className=" hidden sm:block ">
            { id &&  <ul className="flex space-x-10 text-xl font-semibold text-white cursor-pointer items-center">
-              <Link to="/mynotes">
+              <Link to="/mynotes" className="focus:text-blue-300 hover:text-blue-300">
                 <li>My Notes</li>
               </Link>
 
@@ -134,7 +134,7 @@ function Header({show}) {
               <MenuIcon />
             </a>}
 
-          { id && <ul className="dropdown-menu">
+           <ul className="dropdown-menu">
               <li>
                 <a className="dropdown-item" href="/">
                   My Notes
@@ -150,7 +150,7 @@ function Header({show}) {
                   LogOut
                 </a>
               </li>
-            </ul>}
+            </ul>
           </div>
         </div>
       </nav>
