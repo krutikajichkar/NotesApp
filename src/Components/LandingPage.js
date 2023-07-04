@@ -13,7 +13,7 @@ function LandingPage() {
 // },[navigate])
   return (
     <>
-    <Header/>
+    <Header />
          <div className="relative text-center">
         <img
           src={notes_img}

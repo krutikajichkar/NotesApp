@@ -5,6 +5,8 @@ import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import supabase from "../config/SupabaseClient";
 import { useNavigate } from "react-router-dom";
+import Header from "./Header/Header";
+
 
 const EditNotes = () => {
     const [notes, setNotes] = useState([]);
@@ -50,19 +52,20 @@ const EditNotes = () => {
   };
 
   const editHandler = async () => {
-    const { data, error } = await supabase
+    const {error } = await supabase
       .from("notes")
       .update({  title:title,  content:content,  category:category })
       .eq("id", id)
       .select()
 
       if(error){
-        console.log(error.message)
+        console.log(error)
       }
   };
 
   useEffect(() => {
     fetchData();
+    
   }, []);
 
   // const resetHandler = () => {
@@ -71,7 +74,10 @@ const EditNotes = () => {
   //   setTitle('')
   // }
   return (
-    <MainScreen title="Edit Notes Here..." className="pt-[100px] container">
+    <>
+    
+   <Header/>
+   <MainScreen title="Edit Notes Here..." className="pt-[100px] container">
       {/* {fetchError && (<p>{fetchError}</p>)} */}
       <Card>
         <Card.Header>Create a Note</Card.Header>
@@ -129,6 +135,7 @@ const EditNotes = () => {
         </Card.Footer>
       </Card>
     </MainScreen>
+    </>
   );
 };
 

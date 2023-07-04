@@ -5,23 +5,26 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import supabase from "../config/SupabaseClient";
+import Header from "./Header/Header";
+import Loader from "./Loader";
+
 
 
 
 function MyNotes() {
 
-  // const [title, setTitle] = useState();
-  // const [content, setContent] = useState();
-  // const [category, setCategory] = useState();
+ 
   
   const [notes, setNotes] = useState([]);
   const [fetcherror, setFetcherror] = useState();
   const [clicked, setClicked] = useState(false);
   const [userName, setuserName] = useState('')
   const [user_id, setuser_id] = useState(null)
-  
+  const [loading, setLoading] = useState(true)
+ 
 
   const fetchData = async (user_id) => {
+    
     let { data  , error} = await supabase
     .from('notes')
     .select('*')
@@ -35,7 +38,7 @@ function MyNotes() {
     if(data){
       
       setNotes(data);
-     
+      setLoading(false);
       setFetcherror(null);
     }
 
@@ -81,7 +84,11 @@ function MyNotes() {
 
   return (
    <>
-    <MainScreen
+    
+   {loading && <Loader/>}
+   {!loading && <Header/>}
+ 
+   {!loading && <MainScreen
       title= {`Welcome Back ${userName}...`}
       className="pt-[100px] container"
     >
@@ -133,7 +140,11 @@ function MyNotes() {
 
        )}
       </div>
-    </MainScreen>
+      {notes && notes.length===0 && <div className="absolute top-[50%] left-[40%] translate-[-50%,-50%]">
+             <h3 className="text-[30px] font-semibold">No Notes Found !!</h3>
+            
+      </div>}
+    </MainScreen>}
    </>
   );
 }

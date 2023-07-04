@@ -1,22 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, {  useState } from "react";
 import MainScreen from "../MainScreen";
 import { useNavigate } from "react-router-dom";
 import supabase from "../../config/SupabaseClient";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
-import { getuser } from "../../config/user";
-import {v4 as uuidv4} from 'uuid';
-import { useUser } from "@supabase/auth-helpers-react";
+import { v4 as uuidv4 } from "uuid";
+import { Link } from "react-router-dom";
 
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [validated, setValidated] = useState(false);
-
-  const [selectedFile, setselectedFile] = useState("");
  
-  
+  const [selectedFile, setselectedFile] = useState("");
 
   const navigate = useNavigate();
 
@@ -30,16 +27,14 @@ function Register() {
       createUser();
 
       //getUser()
-     
     }
   };
 
   const uploadFiles = async (id) => {
-   
     if (selectedFile) {
       const { data, error } = await supabase.storage
-      .from("avatars")
-      .upload( id + "/" + uuidv4(), selectedFile);
+        .from("avatars")
+        .upload(id + "/" + uuidv4(), selectedFile);
 
       if (data) {
         console.log(data);
@@ -51,8 +46,6 @@ function Register() {
     }
   };
 
-
-
   // const fileHandler = async (e) => {
   //   const file = e.target.files[0];
   //   setselectedFile(file);
@@ -60,36 +53,34 @@ function Register() {
   // };
 
   const createUser = async () => {
-   
-      const { data, error } = await supabase.auth.signUp({
-        email: email,
-        password: password,
-        options: {
-          data: {
-            full_name: name,
-          },
+    const { data, error } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+      options: {
+        data: {
+          full_name: name,
         },
-      });
-      
-      if (data) {
-        console.log(data);
-        const {user} = data;
-        if(user){
-         
-          console.log(user.id);
-          uploadFiles(user.id);
-        }
-        alert("Registered Successfully ");
-        navigate("/login");
+      },
+    });
+
+    if (data) {
+      console.log(data);
+      const { user } = data;
+      if (user) {
+        console.log(user.id);
+        uploadFiles(user.id);
+        
       }
-      else{
-        alert(error.message)
-      }
-    } 
-  
+      alert("Registered Successfully ");
+      navigate('/login')
+    } else {
+      alert(error.message);
+    }
+  };
 
   return (
     <>
+    
       <MainScreen title="Register Here..." className="pt-[100px]">
         <Form noValidate validated={validated} onSubmit={handleSubmit}>
           <Row className="mb-3">
@@ -105,7 +96,7 @@ function Register() {
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
             <Form.Group className="mb-3" controlId="validationCustom02">
-              <Form.Label>Name</Form.Label>
+              <Form.Label>Email</Form.Label>
               <Form.Control
                 required
                 type="email"
@@ -134,7 +125,7 @@ function Register() {
                 type="file"
                 placeholder="Choose a File"
                 onChange={(e) => setselectedFile(e.target.files[0])}
-                //onChange={fileHandler}
+                
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
@@ -144,6 +135,7 @@ function Register() {
                 Register
               </button>
             </div>
+            <div className="mt-2 text-[18px] "> Already have an account ? <Link to='login' className="text-blue-800">Login Here</Link></div>
           </Row>
         </Form>
       </MainScreen>

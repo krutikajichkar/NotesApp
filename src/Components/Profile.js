@@ -3,6 +3,8 @@ import MainScreen from "./MainScreen";
 import { Form, Row } from "react-bootstrap";
 import supabase from "../config/SupabaseClient";
 import { getuser } from "../config/user";
+import Header from "./Header/Header";
+
 
 
 
@@ -17,6 +19,9 @@ function Profile() {
   const [id, setid] = useState(null);
   const [profile, setprofile] = useState([]);
   const [profileUrl, setprofileUrl] = useState();
+  const [message, setMessage] = useState();
+ 
+  
   const user = getuser();
 
   const timestamp = new Date().getTime();
@@ -86,6 +91,7 @@ function Profile() {
   };
 
   const updateUser = async () => {
+    setMessage("Updating profile....")
     const { data, error } = await supabase.auth.updateUser({
       email: email,
       password: password,
@@ -94,8 +100,10 @@ function Profile() {
 
     if (data) {
       console.log(data);
-      updateProfile(id);
       alert("profile updated successfully");
+      updateProfile(id);
+      window.location.reload()
+      
     } else {
       console.log(error.message);
     }
@@ -109,7 +117,11 @@ function Profile() {
   }, [id]);
 
   return (
-    <MainScreen title="Edit Profile" className="mt-[100px] container">
+   <>
+ 
+   <Header />
+  <MainScreen title="Edit Profile" className="mt-[100px] container">
+    {message && <p>{message}</p>}
       <div className="flex justify-between">
         <div>
           <Form noValidate validated={validated} onSubmit={handleSubmit}>
@@ -168,11 +180,12 @@ function Profile() {
             </Row>
           </Form>
         </div>
-        <div className="w-[300px] h-[300px] ">
-          <img src={CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp} alt="profile_img" />
+        <div className="w-[300px] h-[300px]">
+          <img className="rounded-xl" src={CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp} alt="profile_img" />
         </div>
       </div>
     </MainScreen>
+   </>
   );
 }
 
