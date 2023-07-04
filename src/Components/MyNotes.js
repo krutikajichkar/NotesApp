@@ -5,7 +5,7 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import supabase from "../config/SupabaseClient";
-import Header from "./Header/Header";
+import Header from "./Header/HeaderAuth";
 import Loader from "./Loader";
 
 

@@ -3,7 +3,7 @@ import MainScreen from "./MainScreen";
 import { Form, Row } from "react-bootstrap";
 import supabase from "../config/SupabaseClient";
 import { getuser } from "../config/user";
-import Header from "./Header/Header";
+import Header from "./Header/HeaderAuth";
 import Success from "./popups/Success";
 import Error from "./popups/Error";
 

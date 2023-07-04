@@ -1,6 +1,6 @@
 import React from 'react'
 import notes_img from "./Images/notes_img.png";
-import Header from './Header/Header';
+import HeaderAuth from './Header/HeaderAuth';
 
 function LandingPage() {
 
@@ -13,7 +13,7 @@ function LandingPage() {
 // },[navigate])
   return (
     <>
-    <Header />
+    <HeaderAuth />
          <div className="relative text-center">
         <img
           src={notes_img}
