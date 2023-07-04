@@ -133,9 +133,11 @@ const getUser = async () => {
 
             <ul className="dropdown-menu">
               <li>
-                <a className="dropdown-item" href="/">
+               <Link to='mynotes'>
+               <a className="dropdown-item" href="/">
                   My Notes
                 </a>
+               </Link>
               </li>
 
               <li>
