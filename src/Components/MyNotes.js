@@ -97,7 +97,7 @@ function MyNotes() {
       </Link>
 
      <div className=" pb-2">
-       {/* {fetcherror && (<p>{fetcherror}</p>)} */}
+       {fetcherror && (<p>{fetcherror}</p>)}
        {notes && notes.length > 0 &&
         notes.map((ele) => {
           return(

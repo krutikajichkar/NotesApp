@@ -55,18 +55,7 @@ function Profile() {
     }
   };
 
-  const call = async () => {
-    await user.then((response) => {
-      console.log(response.id);
-
-      setid(response.id);
-      console.log(id);
-      setEmail(response.email);
-      console.log(email);
-      setName(response.user_metadata.full_name);
-      console.log(name);
-    });
-  };
+  
 
   const updateProfile = async (id) => {
     console.log(profileUrl, profile[0].name);
@@ -113,9 +102,22 @@ function Profile() {
   };
 
   useEffect(() => {
-    call();
+    const call = async () => {
+      await user.then((response) => {
+        console.log(response.id);
+  
+        setid(response.id);
+        console.log(id);
+        setEmail(response.email);
+        console.log(email);
+        setName(response.user_metadata.full_name);
+        console.log(name);
+      });
+    };
+    call()
     console.log(CDN + id + "/" + profile[0]?.name);
     console.log(id);
+   
     getMedia(id);
   }, [id]);
 
