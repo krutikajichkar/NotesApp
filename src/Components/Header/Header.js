@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import supabase from "../../config/SupabaseClient";
 import Avatar from "@mui/material/Avatar";
+import { getuser } from "../../config/user";
 
 const timestamp = new Date().getTime();
 const CDN =
@@ -11,8 +12,8 @@ const id = localStorage.getItem("ID");
 
 function Header() {
   const navigate = useNavigate();
+  const [profile, setProfile] = useState([]);
 
-  const [profile, setProfile] = useState();
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) {
@@ -24,20 +25,15 @@ function Header() {
     }
   };
 
-  // const getUser = async() => {
-  //     const { data } = await supabase.auth.getUser();
-
-  //     if(data){
-  //         const {user} = data;
-  //         if(user){
-
-  //           ;
-  //            getMedia(user?.id)
-  //            console.log(CDN + user?.id + "/" + profile[0]?.name + "?timestamp=" + timestamp)
-  //            setPath(CDN + user?.id + "/" + profile[0]?.name + "?timestamp=" + timestamp)
-  //         }
-  //     }
-  // }
+  
+const getUser = async () => {
+  const { data, error } = await supabase.auth.getUser();
+  if (error) {
+    console.log(error.message);
+    return null;
+  }
+  return data?.user;
+};
 
   const getMedia = async (id) => {
     const { data, error } = await supabase.storage
@@ -58,10 +54,20 @@ function Header() {
   };
 
   useEffect(() => {
-    getMedia(id);
-    console.log(id);
-    //console.log(CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp);
-  }, [id,profile]);
+    const fetchUser = async () => {
+      const user = await getUser();
+      if (user) {
+        await getMedia(user.id);
+      }
+      console.log(profile);
+    };
+
+    fetchUser();
+    console.log(CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp);
+  }, [profile]);
+
+  const imageUrl = CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp;
+  console.log(imageUrl)
 
   return (
     <div className=" shadow-gray-500 ">
@@ -85,19 +91,14 @@ function Header() {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  {profile && profile[0] && (
+                  {profile  && 
                     <Avatar
                       alt="Profile_img"
                       src={
-                        CDN +
-                        id +
-                        "/" +
-                        profile[0]?.name +
-                        "?timestamp=" +
-                        timestamp
+                        imageUrl
                       }
                     />
-                  )}
+                  }
                 </button>
                 <ul className="dropdown-menu">
                   <Link to="profile">
@@ -136,11 +137,15 @@ function Header() {
                   My Notes
                 </a>
               </li>
+
               <li>
-                <a className="dropdown-item" href="/">
-                  Profile
-                </a>
+                <Link to="profile">
+                  <a className="dropdown-item" href="/">
+                    Profile
+                  </a>
+                </Link>
               </li>
+
               <li>
                 <a className="dropdown-item" href="/" onClick={handleLogout}>
                   LogOut
