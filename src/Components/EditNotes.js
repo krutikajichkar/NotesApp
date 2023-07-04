@@ -78,7 +78,7 @@ const EditNotes = () => {
     
    <Header/>
    <MainScreen title="Edit Notes Here..." className="pt-[100px] container">
-      {/* {fetchError && (<p>{fetchError}</p>)} */}
+      
       <Card>
         <Card.Header>Create a Note</Card.Header>
         <Card.Body>

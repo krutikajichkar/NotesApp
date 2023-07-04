@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
 import Error from "../popups/Error";
 import Success from "../popups/Success"
+import HeaderAuth from "../Header/HeaderAuth";
 
 
 function Register() {
@@ -72,6 +73,7 @@ function Register() {
       const { user } = data;
       if (user) {
         console.log(user.id);
+        localStorage.setItem("ID",user.id)
         uploadFiles(user.id);
         
       }
@@ -85,7 +87,7 @@ function Register() {
 
   return (
     <>
-    
+      <HeaderAuth/>
       <MainScreen title="Register Here..." className="pt-[100px]">
         {error && <Error error={error}/>}
         {message && <Success message={message}/>}

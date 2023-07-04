@@ -3,7 +3,7 @@ import MainScreen from "./MainScreen";
 import { Form, Row } from "react-bootstrap";
 import supabase from "../config/SupabaseClient";
 import { getuser } from "../config/user";
-import Header from "./Header/HeaderAuth";
+import Header from "./Header/Header";
 import Success from "./popups/Success";
 import Error from "./popups/Error";
 
@@ -54,7 +54,19 @@ function Profile() {
       console.log(error.message);
     }
   };
+   
+  const call = async () => {
+    await user.then((response) => {
+      console.log(response.id);
 
+      setid(response.id);
+      console.log(id);
+      setEmail(response.email);
+      console.log(email);
+      setName(response.user_metadata.full_name);
+      console.log(name);
+    });
+  };
   
 
   const updateProfile = async (id) => {
@@ -102,18 +114,7 @@ function Profile() {
   };
 
   useEffect(() => {
-    const call = async () => {
-      await user.then((response) => {
-        console.log(response.id);
   
-        setid(response.id);
-        console.log(id);
-        setEmail(response.email);
-        console.log(email);
-        setName(response.user_metadata.full_name);
-        console.log(name);
-      });
-    };
     call()
     console.log(CDN + id + "/" + profile[0]?.name);
     console.log(id);
@@ -131,13 +132,13 @@ function Profile() {
           <center>
             {" "}
             <div className="w-[300px] h-[300px]">
-              <img
+              {profile && profile[0] && <img
                 className="rounded-xl"
                 src={
                   CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp
                 }
                 alt="profile_img"
-              />
+              />}
             </div>
           </center>
           <div className="mt-[-80px]">

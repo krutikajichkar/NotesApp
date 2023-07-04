@@ -4,6 +4,7 @@ import MainScreen from "../MainScreen";
 import { Link, useNavigate } from "react-router-dom";
 import supabase from "../../config/SupabaseClient";
 import Error from "../popups/Error";
+import HeaderAuth from "../Header/HeaderAuth";
 
 //import MyNotes from "../MyNotes";
 
@@ -33,7 +34,7 @@ function Login() {
 
   return (
     <>
-   
+      <HeaderAuth/>
       <MainScreen title="Login" className=" container">
        {error && <Error error={error}/>}
        

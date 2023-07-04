@@ -5,8 +5,9 @@ import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import supabase from "../config/SupabaseClient";
-import Header from "./Header/HeaderAuth";
+import Header from "./Header/Header";
 import Loader from "./Loader";
+import Error from "./popups/Error";
 
 
 
@@ -31,7 +32,7 @@ function MyNotes() {
     .eq('userID' , user_id)
 
     if(error){
-      setFetcherror(error);
+      setFetcherror(error.message);
       setNotes(null);
     }
     else {
@@ -82,10 +83,9 @@ function MyNotes() {
 
   return (
    <>
-    
-   {loading && <Loader/>}
-   {!loading && <Header/>}
- 
+
+    <Header/>
+    {loading && <Loader/>}
    {!loading && <MainScreen
       title= {`Welcome Back ${userName}...`}
       className="pt-[100px] container"
@@ -97,8 +97,8 @@ function MyNotes() {
       </Link>
 
      <div className=" pb-2">
-       {fetcherror && (<p>{fetcherror}</p>)}
-       {notes && notes.length > 0 &&
+       {fetcherror && <Error error={fetcherror}/>}
+       {notes  &&
         notes.map((ele) => {
           return(
             <Accordion key={ele.id} >
@@ -138,7 +138,7 @@ function MyNotes() {
 
        }
       </div>
-      {notes && notes.length===0 && <div className="absolute top-[50%] left-[40%] translate-[-50%,-50%]">
+      {notes && notes.length===0 && <div className="absolute top-[50%] left-[40%] right-[40%] translate-[-50%,-50%]">
              <h3 className="text-[30px] font-semibold">No Notes Found !!</h3>
             
       </div>}

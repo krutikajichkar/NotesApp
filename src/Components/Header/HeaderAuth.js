@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-import supabase from "../../config/SupabaseClient";
-//import { logOut } from "../../Firebase";
+
 import { getuser } from "../../config/user";
 
 function HeaderAuth() {
@@ -20,25 +19,13 @@ function HeaderAuth() {
       });
   };
 
-  const getMedia = async (id) => {
-    const { data, error } = await supabase.storage
-      .from("avatars")
-      .list(id + "/", {
-        limit: 100,
-        offset: 0,
-        sortBy: { column: "name", order: "asc" },
-      });
 
-    if (data) {
-      console.log(data);
-    } else {
-      console.log(error.message);
-    }
-  };
 
   useEffect(() => {
     getUser();
-    getMedia(id);
+
+   
+    
   }, [id]);
 
   return (
@@ -59,18 +46,7 @@ function HeaderAuth() {
             </Link>
           </div>
 
-          {/* {id && (
-            <div>
-            <input
-              className="rounded-3xl p-2 px-4 outline-none"
-              type="text"
-              placeholder="Search"
-            />
-          </div>
-          )} */}
-          {/* Large Screen */}
-
-          {/* {small Screen} */}
+        
         </div>
       </nav>
     </div>

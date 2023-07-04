@@ -4,7 +4,7 @@ import MainScreen from "./MainScreen";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import supabase from "../config/SupabaseClient";
-import Header from "./Header/HeaderAuth";
+import Header from "./Header/Header";
 import Success from "./popups/Success";
 import Error from "./popups/Error";
 

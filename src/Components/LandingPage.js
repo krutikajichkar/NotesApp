@@ -4,13 +4,7 @@ import HeaderAuth from './Header/HeaderAuth';
 
 function LandingPage() {
 
-//   useEffect(() => {
-//     const userInfo = localStorage.getItem('userInfo')
 
-//     if(userInfo){
-//         navigate('/mynotes')
-//     }
-// },[navigate])
   return (
     <>
     <HeaderAuth />
