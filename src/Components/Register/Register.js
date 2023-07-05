@@ -19,6 +19,7 @@ function Register() {
   const [selectedFile, setselectedFile] = useState("");
   const [error, setError] = useState()
   const [message, setMessage] = useState()
+  const [confirmPassword, setconfirmPassword] = useState()
 
   const navigate = useNavigate();
 
@@ -29,7 +30,12 @@ function Register() {
       event.stopPropagation();
     } else {
       setValidated(true);
+     if(password!==confirmPassword){
+         setError("Password is not Matching")
+     }
+     else{
       createUser();
+     }
 
       //getUser()
     }
@@ -124,6 +130,17 @@ function Register() {
                 placeholder="Enter the Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+              />
+              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="validationCustom04">
+              <Form.Label>Confirm Password</Form.Label>
+              <Form.Control
+                required
+                type="password"
+                placeholder="Confirm Password"
+                value={confirmPassword}
+                onChange={(e) => setconfirmPassword(e.target.value)}
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
