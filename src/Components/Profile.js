@@ -6,6 +6,7 @@ import { getuser } from "../config/user";
 import Header from "./Header/Header";
 import Success from "./popups/Success";
 import Error from "./popups/Error";
+import Loader from './Loader'
 
 const CDN =
   "https://vipfgltyzdlvkveoojpr.supabase.co/storage/v1/object/public/avatars/";
@@ -20,6 +21,7 @@ function Profile() {
   const [message, setMessage] = useState();
   const [error, setError] = useState();
   const user = getuser();
+  const [loading, setLoading] = useState(true)
 
   const timestamp = new Date().getTime();
 
@@ -49,6 +51,7 @@ function Profile() {
       console.log(data);
       setprofile(data);
       setError(null);
+      setLoading(false);
     } else {
       setError(error.message);
       console.log(error.message);
@@ -114,11 +117,9 @@ function Profile() {
   };
 
   useEffect(() => {
-  
     call()
     console.log(CDN + id + "/" + profile[0]?.name);
     console.log(id);
-   
     getMedia(id);
   }, [id]);
 
@@ -132,7 +133,8 @@ function Profile() {
           <center>
             {" "}
             <div className="w-[300px] h-[300px]">
-              {profile && profile[0] && <img
+              {loading && <Loader className="mt-[-30%]"/>}
+              {!loading && profile && profile[0] && <img
                 className="rounded-xl"
                 src={
                   CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp

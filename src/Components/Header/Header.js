@@ -3,16 +3,18 @@ import { Link, useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import supabase from "../../config/SupabaseClient";
 import Avatar from "@mui/material/Avatar";
-import { getuser } from "../../config/user";
+
 
 const timestamp = new Date().getTime();
 const CDN =
   "https://vipfgltyzdlvkveoojpr.supabase.co/storage/v1/object/public/avatars/";
-const id = localStorage.getItem("ID");
+
 
 function Header() {
   const navigate = useNavigate();
-  const [profile, setProfile] = useState([]);
+  const [profile, setProfile] = useState([])
+  const [id, setId] = useState(null)
+ 
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -46,7 +48,7 @@ const getUser = async () => {
 
     if (data) {
       console.log(data);
-      setProfile(data);
+      setProfile(data)
       console.log(profile);
     } else {
       console.log(error.message);
@@ -58,6 +60,7 @@ const getUser = async () => {
       const user = await getUser();
       if (user) {
         await getMedia(user.id);
+        setId(user.id)
       }
       console.log(profile);
     };
@@ -91,14 +94,14 @@ const getUser = async () => {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  {profile  && 
-                    <Avatar
+                
+                   {profile && profile[0] &&  <Avatar
                       alt="Profile_img"
                       src={
-                        imageUrl
+                        CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp
                       }
-                    />
-                  }
+                    />}
+                  
                 </button>
                 <ul className="dropdown-menu">
                   <Link to="profile">

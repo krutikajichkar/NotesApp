@@ -8,6 +8,7 @@ import supabase from "../config/SupabaseClient";
 import Header from "./Header/Header";
 import Loader from "./Loader";
 import Error from "./popups/Error";
+import { ReactMarkdown } from "react-markdown/lib/react-markdown";
 
 
 
@@ -18,7 +19,6 @@ function MyNotes() {
   
   const [notes, setNotes] = useState([]);
   const [fetcherror, setFetcherror] = useState();
-  const [clicked, setClicked] = useState(false);
   const [userName, setuserName] = useState('')
   const [user_id, setuser_id] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -50,7 +50,8 @@ function MyNotes() {
   .delete()
   .eq('id',id)
 
-  setClicked(true);
+
+  window.location.reload()
   console.log("deletee is clicked with id ",id)
   console.log(error)
   }
@@ -79,7 +80,7 @@ function MyNotes() {
   useEffect (() => {
     fetchData(user_id);
     getUser();
-  },[clicked,user_id])
+  },[user_id])
 
   return (
    <>
@@ -124,7 +125,7 @@ function MyNotes() {
               <div className="card-body">
                 <h4 className="badge text-bg-success"> {ele.category} </h4>
                 <blockquote className="blockquote mb-0">
-                  <p>{ele.content}</p>
+                  <ReactMarkdown className="mt-4">{ele.content}</ReactMarkdown>
                   <footer className="blockquote-footer pt-4">
                     Created on {new Date(ele.created_at).toDateString()}
                     {/* <cite title="Source Title">Source Title</cite> */}

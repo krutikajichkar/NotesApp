@@ -7,6 +7,8 @@ import supabase from "../config/SupabaseClient";
 import Header from "./Header/Header";
 import Success from "./popups/Success";
 import Error from "./popups/Error";
+import ReactMarkdown from "react-markdown";
+
 
 const CreateNote = () => {
   const [validated, setValidated] = useState(false);
@@ -14,11 +16,8 @@ const CreateNote = () => {
   const [content, setContent] = useState();
   const [category, setCategory] = useState();
   const [fetchError, setfetchError] = useState(null);
-  const [message, setMessage] = useState()
+  const [message, setMessage] = useState();
   const [user_id, setuser_id] = useState(null);
- 
-
-
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -26,8 +25,9 @@ const CreateNote = () => {
     const form = event.currentTarget;
     if (form.checkValidity() === false) {
       event.stopPropagation();
-      setfetchError("Please fill the required details")
+      setfetchError("Please fill the required details");
     } else {
+      setfetchError(null)
       setValidated(true);
       insertData();
     }
@@ -39,33 +39,29 @@ const CreateNote = () => {
     if (data) {
       console.log(data.user.id);
       setuser_id(data.user.id);
-     
     }
   };
 
   const insertData = async () => {
-    const { error } = await supabase
-      .from("notes")
-      .insert({
-        title: title,
-        content: content,
-        category: category,
-        userID: user_id,
-      });
-
-   
+    const { error } = await supabase.from("notes").insert({
+      title: title,
+      content: content,
+      category: category,
+      userID: user_id,
+    });
 
     if (error) {
       setfetchError(error.message);
-    }
-    else{
-      setfetchError(null)
-      setMessage("Created note Successfully!! You can check them on My Notes OR If you want to ccreate another one , You can");
+    } else {
+      setfetchError(null);
+      setMessage(
+        "Created note Successfully!! You can check them on My Notes OR If you want to ccreate another one , You can"
+      );
     }
   };
 
   const resetHandler = () => {
-    setMessage(null)
+    setMessage(null);
     setCategory("");
     setContent("");
     setTitle("");
@@ -78,8 +74,9 @@ const CreateNote = () => {
     <>
       <Header />
       <MainScreen title="Create Notes Here..." className="pt-[100px] container">
-        {fetchError && <Error error={fetchError}/>}
-        {message && <Success message={message}/>}
+      
+        {fetchError && <Error error={fetchError} />}
+        {message && <Success message={message} />}
         <Card>
           <Card.Header>Create a Note</Card.Header>
           <Card.Body>
@@ -107,6 +104,15 @@ const CreateNote = () => {
                     onChange={(e) => setContent(e.target.value)}
                   />
                 </Form.Group>
+
+                {content && (
+                  <Card>
+                    <Card.Header>Note Preview</Card.Header>
+                    <Card.Body>
+                    <ReactMarkdown>{content}</ReactMarkdown>
+                    </Card.Body>
+                  </Card>
+                )}
 
                 <Form.Group className="mb-3" controlId="validationCustom03">
                   <Form.Label>Category</Form.Label>
@@ -138,9 +144,12 @@ const CreateNote = () => {
             Created at {new Date().toDateString()}
           </Card.Footer>
         </Card>
+       
       </MainScreen>
     </>
   );
 };
 
 export default CreateNote;
+
+
