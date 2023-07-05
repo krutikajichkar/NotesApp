@@ -7,6 +7,8 @@ import Header from "./Header/Header";
 import Success from "./popups/Success";
 import Error from "./popups/Error";
 import Loader from './Loader'
+import { useNavigate } from "react-router-dom";
+
 
 const CDN =
   "https://vipfgltyzdlvkveoojpr.supabase.co/storage/v1/object/public/avatars/";
@@ -22,8 +24,10 @@ function Profile() {
   const [error, setError] = useState();
   const user = getuser();
   const [loading, setLoading] = useState(true)
+  
 
   const timestamp = new Date().getTime();
+  const navigate = useNavigate()
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -34,7 +38,7 @@ function Profile() {
       setError("Please fill all the details");
     } else {
       setValidated(true);
-      updateUser();
+      updateUser()
     }
   };
 
@@ -106,10 +110,13 @@ function Profile() {
     if (data) {
       console.log(data);
       alert("profile updated successfully");
+      navigate('/mynotes/profile')
       setError(null);
+      setLoading(true)
       updateProfile(id).then((response) => {
-        window.location.reload();
-      });
+        setMessage(null)
+        setLoading(false)
+      })
     } else {
       setError(error.message);
       console.log(error.message);
@@ -121,7 +128,7 @@ function Profile() {
     console.log(CDN + id + "/" + profile[0]?.name);
     console.log(id);
     getMedia(id);
-  }, [id]);
+  }, [id,profile]);
 
   return (
     <>

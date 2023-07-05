@@ -63,7 +63,7 @@ function Header() {
 
     fetchUser();
     console.log(CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp);
-  }, [profile]);
+  }, [id,profile]);
 
   const imageUrl =
     CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp;
