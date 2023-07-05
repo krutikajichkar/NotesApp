@@ -20,11 +20,13 @@ function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/mynotes" element={<MyNotes />} />
+            <Route path="/mynotes/createnote/mynotes" element={<MyNotes />} />
             <Route path="/register" element={<Register />} />
             <Route path="/login/register" element={<Register />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register/login" element={<Login />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/createnote/profile" element={<Profile />} />
             <Route path="/mynotes/profile" element={<Profile />} />
             <Route path="/mynotes/createnote" element={<CreateNote/>}/>
             <Route path="/mynotes/editnotes" element={<EditNotes/>}/>

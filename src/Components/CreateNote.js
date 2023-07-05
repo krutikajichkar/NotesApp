@@ -57,6 +57,7 @@ const CreateNote = () => {
       setMessage(
         "Created note Successfully!! You can check them on My Notes OR If you want to ccreate another one , You can"
       );
+      
     }
   };
 
