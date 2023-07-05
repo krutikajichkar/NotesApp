@@ -4,17 +4,14 @@ import MenuIcon from "@mui/icons-material/Menu";
 import supabase from "../../config/SupabaseClient";
 import Avatar from "@mui/material/Avatar";
 
-
 const timestamp = new Date().getTime();
 const CDN =
   "https://vipfgltyzdlvkveoojpr.supabase.co/storage/v1/object/public/avatars/";
 
-
 function Header() {
   const navigate = useNavigate();
-  const [profile, setProfile] = useState([])
-  const [id, setId] = useState(null)
- 
+  const [profile, setProfile] = useState([]);
+  const [id, setId] = useState(null);
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -27,15 +24,14 @@ function Header() {
     }
   };
 
-  
-const getUser = async () => {
-  const { data, error } = await supabase.auth.getUser();
-  if (error) {
-    console.log(error.message);
-    return null;
-  }
-  return data?.user;
-};
+  const getUser = async () => {
+    const { data, error } = await supabase.auth.getUser();
+    if (error) {
+      console.log(error.message);
+      return null;
+    }
+    return data?.user;
+  };
 
   const getMedia = async (id) => {
     const { data, error } = await supabase.storage
@@ -48,7 +44,7 @@ const getUser = async () => {
 
     if (data) {
       console.log(data);
-      setProfile(data)
+      setProfile(data);
       console.log(profile);
     } else {
       console.log(error.message);
@@ -60,7 +56,7 @@ const getUser = async () => {
       const user = await getUser();
       if (user) {
         await getMedia(user.id);
-        setId(user.id)
+        setId(user.id);
       }
       console.log(profile);
     };
@@ -69,13 +65,14 @@ const getUser = async () => {
     console.log(CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp);
   }, [profile]);
 
-  const imageUrl = CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp;
-  console.log(imageUrl)
+  const imageUrl =
+    CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp;
+  console.log(imageUrl);
 
   return (
     <div className=" shadow-gray-500 ">
       <nav className="bg-cyan-600 h-14 flex items-center p-10 justify-between fixed left-0 right-0 z-50">
-        <h1 className="text-white text-2xl font-bold">Notes Zipper</h1>
+        <h1 className="text-white text-2xl  font-bold">Notes Zipper</h1>
         <div className="flex space-x-12 items-center">
           {/* Large Screen */}
           <div className=" hidden sm:block ">
@@ -94,14 +91,19 @@ const getUser = async () => {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                
-                   {profile && profile[0] &&  <Avatar
+                  {profile && profile[0] && (
+                    <Avatar
                       alt="Profile_img"
                       src={
-                        CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp
+                        CDN +
+                        id +
+                        "/" +
+                        profile[0]?.name +
+                        "?timestamp=" +
+                        timestamp
                       }
-                    />}
-                  
+                    />
+                  )}
                 </button>
                 <ul className="dropdown-menu">
                   <Link to="profile">
@@ -123,40 +125,55 @@ const getUser = async () => {
             </ul>
           </div>
           {/* {small Screen} */}
-          <div className="dropdown sm:hidden block ">
-            <a
-              className=" text-white"
-              href="/"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <MenuIcon />
-            </a>
 
-            <ul className="dropdown-menu">
-              <li>
+          <div className="dropdown sm:hidden block  ">
+            <div className="flex space-x-4  items-center">
+              <Link
+                to="/mynotes"
+              >
+            
+                <div className="text-white font-semibold focus:text-blue-300 hover:text-blue-300">My Notes</div>
+              </Link>
+              <div>
+                <a
+                  className=" text-white"
+                  href="/"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <MenuIcon />
+                </a>
+
+                <ul className="dropdown-menu">
+                  {/* <li>
                <Link to='mynotes'>
                <a className="dropdown-item" href="/">
                   My Notes
                 </a>
                </Link>
-              </li>
+              </li> */}
 
-              <li>
-                <Link to="profile">
-                  <a className="dropdown-item" href="/">
-                    Profile
-                  </a>
-                </Link>
-              </li>
+                  <li>
+                    <Link to="profile">
+                      <a className="dropdown-item" href="/">
+                        Profile
+                      </a>
+                    </Link>
+                  </li>
 
-              <li>
-                <a className="dropdown-item" href="/" onClick={handleLogout}>
-                  LogOut
-                </a>
-              </li>
-            </ul>
+                  <li>
+                    <a
+                      className="dropdown-item"
+                      href="/"
+                      onClick={handleLogout}
+                    >
+                      LogOut
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </nav>
