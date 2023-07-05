@@ -150,6 +150,7 @@ function Register() {
                 required
                 type="file"
                 placeholder="Choose a File"
+                accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx"
                 onChange={(e) => setselectedFile(e.target.files[0])}
                 
               />

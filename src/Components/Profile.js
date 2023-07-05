@@ -192,6 +192,7 @@ function Profile() {
                   <Form.Control
                     required
                     type="file"
+                    accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx"
                     placeholder="Update Profile"
                     onChange={(e) => setprofileUrl(e.target.files[0])}
                   />
