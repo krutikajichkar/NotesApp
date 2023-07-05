@@ -140,10 +140,10 @@ function Profile() {
         <div className="flex-col  justify-between">
           <center>
             {" "}
-            <div className="w-[300px] h-[300px]">
+            <div >
               {loading && <Loader className="mt-[-30%]"/>}
               {!loading && profile && profile[0] && <img
-                className="rounded-xl"
+                className="rounded-xl lg:w-[300px] lg:h-[200px] w-[150px] h-[150px]"
                 src={
                   CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp
                 }
@@ -151,7 +151,7 @@ function Profile() {
               />}
             </div>
           </center>
-          <div className="mt-[-80px]">
+          <div >
             <Form noValidate validated={validated} onSubmit={handleSubmit}>
               <Row className="mb-3">
                 <Form.Group className="mb-3" controlId="validationCustom01">
