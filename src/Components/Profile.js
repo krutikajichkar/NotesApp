@@ -114,6 +114,7 @@ function Profile() {
       setError(null);
       setLoading(true)
       updateProfile(id).then((response) => {
+        window.location.reload()
         setMessage(null)
         setLoading(false)
       })
