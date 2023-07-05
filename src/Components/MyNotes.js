@@ -50,10 +50,12 @@ function MyNotes() {
   .delete()
   .eq('id',id)
 
-
   window.location.reload()
+  
+  setLoading(true)
   console.log("deletee is clicked with id ",id)
   console.log(error)
+  setLoading(false)
   }
 
   const editHandler = (id) => {

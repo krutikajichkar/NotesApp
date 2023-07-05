@@ -8,7 +8,7 @@ import Header from "./Header/Header";
 import Success from "./popups/Success";
 import Error from "./popups/Error";
 import ReactMarkdown from "react-markdown";
-
+import { useNavigate } from "react-router-dom";
 
 const CreateNote = () => {
   const [validated, setValidated] = useState(false);
@@ -18,7 +18,7 @@ const CreateNote = () => {
   const [fetchError, setfetchError] = useState(null);
   const [message, setMessage] = useState();
   const [user_id, setuser_id] = useState(null);
-
+  const navigate = useNavigate()
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -57,6 +57,8 @@ const CreateNote = () => {
       setMessage(
         "Created note Successfully!! You can check them on My Notes OR If you want to ccreate another one , You can"
       );
+
+      navigate('/mynotes')
       
     }
   };
