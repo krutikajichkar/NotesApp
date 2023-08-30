@@ -3,8 +3,11 @@ import { Link, useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import supabase from "../../config/SupabaseClient";
 import Avatar from "@mui/material/Avatar";
-import {auth} from '../../Firebase';
+import { auth } from "../../Firebase";
 import { signOut } from "firebase/auth";
+import { useSelector } from "react-redux";
+
+
 
 const timestamp = new Date().getTime();
 const CDN =
@@ -15,12 +18,19 @@ function Header() {
   const [profile, setProfile] = useState([]);
   const [id, setId] = useState(null);
 
+  const currentUser = auth.currentUser;
+
+  const user = useSelector((store) => store.user);
+
+
   const handleLogout = async () => {
-    await signOut(auth).then(() => {
-      navigate('/')
-    }).catch((error) => {
-      console.log(error.message)
-    });
+    await signOut(auth)
+      .then(() => {
+        navigate("/");
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
   };
 
   const getUser = async () => {
@@ -76,66 +86,69 @@ function Header() {
           {/* Large Screen */}
           <div className=" hidden sm:block ">
             <ul className="flex space-x-10 text-xl font-semibold text-white cursor-pointer items-center">
-              <Link to="/login">
-                <li>
-                  <button className="text-cyan-600 px-4 pt-2 pb-2 rounded-3xl font-semibold bg-white -mr-6">
-                    SignIn
-                  </button>
-                </li>
-              </Link>
-              <Link to="/register">
-                {" "}
-                <li>
-                  <button className="text-cyan-600 px-4 pt-2 pb-2 rounded-3xl font-semibold bg-white ">
-                    SignUp
-                  </button>
-                </li>
-              </Link>
-              <Link
-                to="/mynotes"
-                
-              >
-                <li className="focus:text-blue-300 hover:text-blue-300">My Notes</li>
-              </Link>
-
-              <div className="dropdown">
-                <button
-                  className=" dropdown-toggle flex items-center"
-                  type="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  {profile && profile[0] && (
-                    <Avatar
-                      alt="Profile_img"
-                      src={
-                        CDN +
-                        id +
-                        "/" +
-                        profile[0]?.name +
-                        "?timestamp=" +
-                        timestamp
-                      }
-                    />
-                  )}
-                </button>
-                <ul className="dropdown-menu">
-                  <Link to="account">
-                    <button className="dropdown-item" type="button">
-                      My Profile
-                    </button>
-                  </Link>
+              
+               { !currentUser && <Link to="/login">
                   <li>
-                    <button
-                      className="dropdown-item"
-                      type="button"
-                      onClick={handleLogout}
-                    >
-                      Logout
+                    <button className="text-cyan-600 px-4 pt-2 pb-2 rounded-3xl font-semibold bg-white -mr-6">
+                      SignIn
                     </button>
                   </li>
-                </ul>
-              </div>
+                </Link>}
+              
+              {!currentUser && (
+                <Link to="/register">
+                
+                  <li>
+                    <button className="text-cyan-600 px-4 pt-2 pb-2 rounded-3xl font-semibold bg-white ">
+                      SignUp
+                    </button>
+                  </li>
+                </Link>
+              )}
+              {currentUser && (
+                <Link to="/mynotes">
+                  <li className="focus:text-blue-300 hover:text-blue-300">
+                    My Notes
+                  </li>
+                </Link>
+              )}
+
+              {currentUser && (
+                <div className="dropdown">
+                  <button
+                    className=" dropdown-toggle flex items-center"
+                    type="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <Avatar
+                      alt="Profile_img"
+                      src="https://static.vecteezy.com/system/resources/thumbnails/002/318/271/small/user-profile-icon-free-vector.jpg"
+                    />
+                  </button>
+                  <ul className="dropdown-menu">
+                    <li>
+                      <button className="dropdown-item" type="button">
+                        {user?.displayName}
+                      </button>
+                    </li>
+                    <Link to="account">
+                      <button className="dropdown-item" type="button">
+                        My Profile
+                      </button>
+                    </Link>
+                    <li>
+                      <button
+                        className="dropdown-item"
+                        type="button"
+                        onClick={handleLogout}
+                      >
+                        Logout
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              )}
             </ul>
           </div>
           {/* {small Screen} */}

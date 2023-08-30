@@ -1,6 +1,9 @@
-import React from "react";
+import React,{useEffect} from "react";
+
 
 const MainScreen = ({ title, children }) => {
+  
+
   return (
     <>
       <div className="container pt-[120px]">

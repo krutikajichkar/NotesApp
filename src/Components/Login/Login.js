@@ -4,6 +4,8 @@ import { Link, useNavigate } from "react-router-dom";
 import Error from "../popups/Error";
 import {auth} from '../../Firebase'
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { useDispatch } from "react-redux";
+import { isSignInToggle } from "../../Redux/userSlice";
 
 //import MyNotes from "../MyNotes";
 
@@ -13,6 +15,7 @@ function Login() {
   const [error, setError] = useState()
    
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,12 +24,14 @@ function Login() {
   .then((userCredential) => {
     // Signed in 
     const user = userCredential.user;
+    console.log(user)
     navigate('/mynotes')
     // ...
   })
   .catch((error) => {
     const errorCode = error.code;
     const errorMessage = error.message;
+    setError(errorCode + errorMessage)
   });
   
   };
@@ -70,7 +75,7 @@ function Login() {
             <button className="btn btn-primary">Submit</button>
           </div>
 
-          <div className="mt-2 text-[18px] ">New Customer ? <Link to='register' className="text-blue-800">Register Here</Link></div>
+          <div className="mt-2 text-[18px] ">New to NotesZipper ? <Link to="register">Register</Link></div>
         </form>
       </MainScreen>
     </>

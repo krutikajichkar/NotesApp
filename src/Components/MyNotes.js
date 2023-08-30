@@ -4,43 +4,40 @@ import { Link } from "react-router-dom";
 import Accordion from "@mui/material/Accordion";
 import AccordionSummary from "@mui/material/AccordionSummary";
 import AccordionDetails from "@mui/material/AccordionDetails";
-import supabase from "../config/SupabaseClient";
-import Header from "./Header/Header";
 import Loader from "./Loader";
 import Error from "./popups/Error";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
+import { useSelector } from "react-redux";
+import { collection, doc, getDocs } from "firebase/firestore"; 
+import {db} from '../Firebase'
 
 function MyNotes() {
   const [notes, setNotes] = useState([]);
   const [fetcherror, setFetcherror] = useState();
-  const [userName, setuserName] = useState("");
-  const [user_id, setuser_id] = useState(null);
+
   const [loading, setLoading] = useState(true);
 
-  const fetchData = async (user_id) => {
-    let { data, error } = await supabase
-      .from("notes")
-      .select("*")
-      .eq("userID", user_id);
+  
+  const user = useSelector(store => store.user);
 
-    if (error) {
-      setFetcherror(error.message);
-      setNotes(null);
-    } else {
-      setNotes(data);
-      setLoading(false);
-      setFetcherror(null);
-    }
+  const getNotes = async() => {
+     await getDocs(collection(db, "notes")).then((response) => {
+      setNotes(response.docs.map((doc) => ({
+        ...doc.data(), id: doc.id
+    })))
+     })
+  }
 
-    //console.log(data)
-  };
+  useEffect(() => {
+    getNotes()
+  } ,[])
 
   return (
     <>
       {!loading && <Loader />}
       {loading && (
         <MainScreen
-          title={`Welcome Back ${userName}...`}
+          title={`Welcome Back ${user?.displayName}...`}
           className="pt-[100px] container"
         >
           <Link to="createnote">
@@ -83,7 +80,7 @@ function MyNotes() {
                           {ele.category}{" "}
                         </h4>
                         <blockquote className="blockquote mb-0">
-                          <ReactMarkdown className="mt-4">
+                          <ReactMarkdown className="mt-4 prose">
                             {ele.content}
                           </ReactMarkdown>
                           <footer className="blockquote-footer pt-4">

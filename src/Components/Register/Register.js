@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import MainScreen from "../MainScreen";
 import { useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
-import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
 import Error from "../popups/Error";
 import Success from "../popups/Success";
@@ -11,51 +10,44 @@ import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { auth, storage } from "../../Firebase";
 import { useDispatch } from "react-redux";
 import { addUser } from "../../Redux/userSlice";
-import { getDownloadURL , uploadBytes ,ref } from "firebase/storage";
+import { getDownloadURL, uploadBytes, ref } from "firebase/storage";
 
 
 function Register() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [selectedFile, setselectedFile] = useState("");
+  const email = useRef(null);
+  const password = useRef(null);
+  const name = useRef(null);
+
   const [error, setError] = useState();
   const [message, setMessage] = useState();
 
-  console.log(selectedFile);
-
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await createUserWithEmailAndPassword(auth, email, password)
-      .then(() => {
-        const fileRef = ref(storage, auth.currentUser.uid + ".png");
-        uploadBytes(fileRef, selectedFile);
-        getDownloadURL(fileRef)
-        .then((response) => console.log(response));
-      })
-      .then(() => {
+   await createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
+      .then((userCredential) => {
+        const user = userCredential.user;
+
         updateProfile(auth.currentUser, {
-          displayName: name,
+          displayName: name.current.value,
+        }).then(() => {
+          const { uid, email, displayName } = auth.currentUser;
+          dispatch(
+            addUser({
+              uid: uid,
+              email: email,
+              displayName: displayName,
+            })
+          );
+          navigate("/mynotes");
         });
       })
-      .then(() => {
-        const { uid, displayName, photoURL, email } = auth.currentUser;
-        dispatch(
-          addUser({
-            uid: uid,
-            email: email,
-            displayName: displayName,
-            photoURL: photoURL,
-          })
-        );
-      })
-
       .catch((error) => {
         const errorCode = error.code;
         const errorMessage = error.message;
-        setError(errorCode + errorMessage);
+        setError(errorCode + errorMessage)
       });
   };
 
@@ -72,8 +64,7 @@ function Register() {
                 required
                 type="text"
                 placeholder="Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                ref={name}
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
@@ -83,8 +74,7 @@ function Register() {
                 required
                 type="email"
                 placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                ref={email}
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
@@ -95,20 +85,7 @@ function Register() {
                 required
                 type="password"
                 placeholder="Enter the Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-            </Form.Group>
-
-            <Form.Group className="mb-3" controlId="formFile">
-              <Form.Label>Profile Picture</Form.Label>
-              <Form.Control
-                required
-                type="file"
-                placeholder="Choose a File"
-                accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx"
-                onChange={(e) => setselectedFile(e.target.files[0])}
+                ref={password}
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
