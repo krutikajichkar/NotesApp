@@ -3,6 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
 import supabase from "../../config/SupabaseClient";
 import Avatar from "@mui/material/Avatar";
+import {auth} from '../../Firebase';
+import { signOut } from "firebase/auth";
 
 const timestamp = new Date().getTime();
 const CDN =
@@ -14,14 +16,11 @@ function Header() {
   const [id, setId] = useState(null);
 
   const handleLogout = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      alert(error.message);
-    } else {
-      alert("Logged out Successfully");
-
-      navigate("/");
-    }
+    await signOut(auth).then(() => {
+      navigate('/')
+    }).catch((error) => {
+      console.log(error.message)
+    });
   };
 
   const getUser = async () => {
@@ -63,7 +62,7 @@ function Header() {
 
     fetchUser();
     console.log(CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp);
-  }, [id,profile]);
+  }, [id, profile]);
 
   const imageUrl =
     CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp;
@@ -77,11 +76,26 @@ function Header() {
           {/* Large Screen */}
           <div className=" hidden sm:block ">
             <ul className="flex space-x-10 text-xl font-semibold text-white cursor-pointer items-center">
+              <Link to="/login">
+                <li>
+                  <button className="text-cyan-600 px-4 pt-2 pb-2 rounded-3xl font-semibold bg-white -mr-6">
+                    SignIn
+                  </button>
+                </li>
+              </Link>
+              <Link to="/register">
+                {" "}
+                <li>
+                  <button className="text-cyan-600 px-4 pt-2 pb-2 rounded-3xl font-semibold bg-white ">
+                    SignUp
+                  </button>
+                </li>
+              </Link>
               <Link
                 to="/mynotes"
-                className="focus:text-blue-300 hover:text-blue-300"
+                
               >
-                <li>My Notes</li>
+                <li className="focus:text-blue-300 hover:text-blue-300">My Notes</li>
               </Link>
 
               <div className="dropdown">
@@ -106,7 +120,7 @@ function Header() {
                   )}
                 </button>
                 <ul className="dropdown-menu">
-                  <Link to="profile">
+                  <Link to="account">
                     <button className="dropdown-item" type="button">
                       My Profile
                     </button>
@@ -128,11 +142,10 @@ function Header() {
 
           <div className="dropdown sm:hidden block  ">
             <div className="flex space-x-4  items-center">
-              <Link
-                to="/mynotes"
-              >
-            
-                <div className="text-white font-semibold focus:text-blue-300 hover:text-blue-300">My Notes</div>
+              <Link to="/mynotes">
+                <div className="text-white font-semibold focus:text-blue-300 hover:text-blue-300">
+                  My Notes
+                </div>
               </Link>
               <div>
                 <a

@@ -1,103 +1,70 @@
-import React, {  useState } from "react";
+import React, { useState } from "react";
 import MainScreen from "../MainScreen";
 import { useNavigate } from "react-router-dom";
-import supabase from "../../config/SupabaseClient";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import { v4 as uuidv4 } from "uuid";
 import { Link } from "react-router-dom";
 import Error from "../popups/Error";
-import Success from "../popups/Success"
-import HeaderAuth from "../Header/HeaderAuth";
+import Success from "../popups/Success";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { auth, storage } from "../../Firebase";
+import { useDispatch } from "react-redux";
+import { addUser } from "../../Redux/userSlice";
+import { getDownloadURL , uploadBytes ,ref } from "firebase/storage";
 
 
 function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
-  const [validated, setValidated] = useState(false);
   const [selectedFile, setselectedFile] = useState("");
-  const [error, setError] = useState()
-  const [message, setMessage] = useState()
-  const [confirmPassword, setconfirmPassword] = useState()
+  const [error, setError] = useState();
+  const [message, setMessage] = useState();
+
+  console.log(selectedFile);
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await createUserWithEmailAndPassword(auth, email, password)
+      .then(() => {
+        const fileRef = ref(storage, auth.currentUser.uid + ".png");
+        uploadBytes(fileRef, selectedFile);
+        getDownloadURL(fileRef)
+        .then((response) => console.log(response));
+      })
+      .then(() => {
+        updateProfile(auth.currentUser, {
+          displayName: name,
+        });
+      })
+      .then(() => {
+        const { uid, displayName, photoURL, email } = auth.currentUser;
+        dispatch(
+          addUser({
+            uid: uid,
+            email: email,
+            displayName: displayName,
+            photoURL: photoURL,
+          })
+        );
+      })
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.stopPropagation();
-    } else {
-      setValidated(true);
-     if(password!==confirmPassword){
-         setError("Password is not Matching")
-     }
-     else{
-      createUser();
-     }
-
-      //getUser()
-    }
-  };
-
-  const uploadFiles = async (id) => {
-    if (selectedFile) {
-      const { data, error } = await supabase.storage
-        .from("avatars")
-        .upload(id + "/" + uuidv4(), selectedFile);
-
-      if (data) {
-        console.log(data);
-        console.log(selectedFile);
-      }
-      if (error) {
-        setError(error.message)
-      }
-    }
-  };
-
-  // const fileHandler = async (e) => {
-  //   const file = e.target.files[0];
-  //   setselectedFile(file);
-  //   console.log(selectedFile);
-  // };
-
-  const createUser = async () => {
-    const { data, error } = await supabase.auth.signUp({
-      email: email,
-      password: password,
-      options: {
-        data: {
-          full_name: name,
-        },
-      },
-    });
-
-    if (data) {
-      console.log(data);
-      const { user } = data;
-      if (user) {
-        console.log(user.id);
-        localStorage.setItem("ID",user.id)
-        uploadFiles(user.id);
-        
-      }
-      setMessage("Registered Successfully ");
-      alert("Registered Successfully")
-      navigate('/login')
-    } else {
-      setError(error.message);
-    }
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        setError(errorCode + errorMessage);
+      });
   };
 
   return (
     <>
-      <HeaderAuth/>
       <MainScreen title="Register Here..." className="pt-[100px]">
-        {error && <Error error={error}/>}
-        {message && <Success message={message}/>}
-        <Form noValidate validated={validated} onSubmit={handleSubmit}>
+        {error && <Error error={error} />}
+        {message && <Success message={message} />}
+        <Form onSubmit={handleSubmit}>
           <Row className="mb-3">
             <Form.Group className="mb-3" controlId="validationCustom01">
               <Form.Label>Name</Form.Label>
@@ -133,17 +100,7 @@ function Register() {
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
-            <Form.Group className="mb-3" controlId="validationCustom04">
-              <Form.Label>Confirm Password</Form.Label>
-              <Form.Control
-                required
-                type="password"
-                placeholder="Confirm Password"
-                value={confirmPassword}
-                onChange={(e) => setconfirmPassword(e.target.value)}
-              />
-              <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
-            </Form.Group>
+
             <Form.Group className="mb-3" controlId="formFile">
               <Form.Label>Profile Picture</Form.Label>
               <Form.Control
@@ -152,7 +109,6 @@ function Register() {
                 placeholder="Choose a File"
                 accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx"
                 onChange={(e) => setselectedFile(e.target.files[0])}
-                
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
@@ -162,7 +118,13 @@ function Register() {
                 Register
               </button>
             </div>
-            <div className="mt-2 text-[18px] "> Already have an account ? <Link to='login' className="text-blue-800">Login Here</Link></div>
+            <div className="mt-2 text-[18px] ">
+              {" "}
+              Already have an account ?{" "}
+              <Link to="login" className="text-blue-800">
+                Login Here
+              </Link>
+            </div>
           </Row>
         </Form>
       </MainScreen>

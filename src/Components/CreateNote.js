@@ -105,6 +105,7 @@ const CreateNote = () => {
                     placeholder="Content"
                     value={content}
                     onChange={(e) => setContent(e.target.value)}
+                    style={{height:"200px"}}
                   />
                 </Form.Group>
 
@@ -112,7 +113,7 @@ const CreateNote = () => {
                   <Card>
                     <Card.Header>Note Preview</Card.Header>
                     <Card.Body>
-                    <ReactMarkdown>{content}</ReactMarkdown>
+                    <ReactMarkdown className="prose">{content}</ReactMarkdown>
                     </Card.Body>
                   </Card>
                 )}

@@ -1,10 +1,9 @@
 import React, { useState } from "react";
 import MainScreen from "../MainScreen";
-//import { signIn } from "../../Firebase";
 import { Link, useNavigate } from "react-router-dom";
-import supabase from "../../config/SupabaseClient";
 import Error from "../popups/Error";
-import HeaderAuth from "../Header/HeaderAuth";
+import {auth} from '../../Firebase'
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 //import MyNotes from "../MyNotes";
 
@@ -17,24 +16,24 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: email,
-      password: password,
-    });
 
-    if (data.user) {
-      console.log(data); 
-      navigate('/mynotes')  
-    }
-    else  {
-      setError(error.message);
-      console.log(error.message)
-    }
+   await signInWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+    // Signed in 
+    const user = userCredential.user;
+    navigate('/mynotes')
+    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+  });
+  
   };
 
   return (
     <>
-      <HeaderAuth/>
+     
       <MainScreen title="Login" className=" container">
        {error && <Error error={error}/>}
        
