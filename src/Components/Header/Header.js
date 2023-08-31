@@ -102,7 +102,7 @@ function Header() {
           {/* {small Screen} */}
 
           <div className="dropdown sm:hidden block  ">
-            <div className="flex space-x-4   items-center">
+            <div className="flex space-x-2   items-center">
               {!user && (
                 <Link to="/login">
                   <button className="text-cyan-600 px-4 pt-2 pb-2 mr-2 rounded-3xl font-semibold bg-white -mr-6">
@@ -118,18 +118,18 @@ function Header() {
                   </button>
                 </Link>
               )}
-              {user && (
+              {currentUser && (
                 <Link to="/mynotes">
                   <div className="text-white font-semibold focus:text-blue-300 hover:text-blue-300">
                     My Notes
                   </div>
                 </Link>
               )}
-              {user && (
+              {currentUser && (
                 <div>
                   <a
                     className=" text-white"
-                    href="/"
+                    
                     role="button"
                     data-bs-toggle="dropdown"
                     aria-expanded="false"
