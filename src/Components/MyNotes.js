@@ -120,8 +120,8 @@ function MyNotes() {
               })}
           </div>
           {notes && notes.length === 0 && (
-            <div className="absolute top-[50%] left-[40%] right-[40%] translate-[-50%,-50%]">
-              <h3 className="text-[30px] font-semibold">No Notes Found !!</h3>
+            <div className=" w-[80%] absolute  left-[40%] right-0 top-[70%] sm:top-[50%] ">
+              <h3 className="text-xs font-semibold sm:text-3xl ">No Notes Found !!</h3>
             </div>
           )}
         </MainScreen>

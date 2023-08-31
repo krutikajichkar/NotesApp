@@ -54,7 +54,7 @@ function Header() {
                 </Link>
               )}
               {user && (
-                <Link to="/mynotes">
+                <Link to="/mynotes" className="text-decoration-none">
                   <li className="focus:text-blue-300 hover:text-blue-300">
                     My Notes
                   </li>
@@ -77,7 +77,7 @@ function Header() {
                   <ul className="dropdown-menu">
                     <li>
                       <button className="dropdown-item" type="button">
-                        {user?.displayName}
+                        {user?.email}
                       </button>
                     </li>
                     <Link to="account">
@@ -102,51 +102,70 @@ function Header() {
           {/* {small Screen} */}
 
           <div className="dropdown sm:hidden block  ">
-            <div className="flex space-x-4  items-center">
-              <Link to="/mynotes">
-                <div className="text-white font-semibold focus:text-blue-300 hover:text-blue-300">
-                  My Notes
-                </div>
-              </Link>
-              <div>
-                <a
-                  className=" text-white"
-                  href="/"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  <MenuIcon />
-                </a>
+            <div className="flex space-x-4   items-center">
+              {!user && (
+                <Link to="/login">
+                  <button className="text-cyan-600 px-4 pt-2 pb-2 mr-2 rounded-3xl font-semibold bg-white -mr-6">
+                    SignIn
+                  </button>
+                </Link>
+              )}
 
-                <ul className="dropdown-menu">
-                  {/* <li>
-               <Link to='mynotes'>
-               <a className="dropdown-item" href="/">
-                  My Notes
-                </a>
-               </Link>
-              </li> */}
+              {!user && (
+                <Link to="/register">
+                  <button className="text-cyan-600 px-4 pt-2 pb-2 rounded-3xl font-semibold bg-white ">
+                    SignUp
+                  </button>
+                </Link>
+              )}
+              {user && (
+                <Link to="/mynotes">
+                  <div className="text-white font-semibold focus:text-blue-300 hover:text-blue-300">
+                    My Notes
+                  </div>
+                </Link>
+              )}
+              {user && (
+                <div>
+                  <a
+                    className=" text-white"
+                    href="/"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    <MenuIcon />
+                  </a>
 
-                  <li>
-                    <Link to="profile">
-                      <a className="dropdown-item" href="/">
-                        Profile
+                  <ul className="dropdown-menu">
+                    <li>
+                      <Link to="mynotes">
+                        <a className="dropdown-item" href="/">
+                          {user?.email}
+                        </a>
+                      </Link>
+                    </li>
+
+                    <li>
+                      <Link to="profile">
+                        <a className="dropdown-item" href="/">
+                          Profile
+                        </a>
+                      </Link>
+                    </li>
+
+                    <li>
+                      <a
+                        className="dropdown-item"
+                        href="/"
+                        onClick={handleLogout}
+                      >
+                        LogOut
                       </a>
-                    </Link>
-                  </li>
-
-                  <li>
-                    <a
-                      className="dropdown-item"
-                      href="/"
-                      onClick={handleLogout}
-                    >
-                      LogOut
-                    </a>
-                  </li>
-                </ul>
-              </div>
+                    </li>
+                  </ul>
+                </div>
+              )}
             </div>
           </div>
         </div>

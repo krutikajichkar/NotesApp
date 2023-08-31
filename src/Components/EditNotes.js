@@ -17,37 +17,36 @@ const EditNotes = () => {
     (note) => note.id === getNotes?.editNoteId
   );
 
+ 
+
+ const mainData = data ?  data[0] : null ;
+
   const [notes, setNotes] = useState([]);
   const [error, setError] = useState();
   const [message, setMessage] = useState();
   const [validated, setValidated] = useState(false);
-  const [title, setTitle] = useState(data[0]?.title);
-  const [content, setContent] = useState(data[0]?.content);
-  const [category, setCategory] = useState(data[0]?.category);
+  const [title, setTitle] = useState(mainData?.title);
+  const [content, setContent] = useState(mainData?.content);
+  const [category, setCategory] = useState(mainData?.category);
 
   //const [fetchError, setfetchError] = useState(null);
   const navigate = useNavigate();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-  };
-
-  const editHandler = async () => {
-    const noteRef = doc(db, "notes", getNotes?.noteId);
+    const noteRef = doc(db, "notes", getNotes?.editNoteId);
     await updateDoc(noteRef, {
       title: title,
       content: content,
       category: category,
     })
       .then(() => {
-        setError(null)
+        setError(null);
         setMessage("Notes Updated Successfully!");
         navigate("/mynotes");
       })
       .catch((e) => setError(e.message));
   };
-
-  if (!data) return;
 
   return (
     <>
@@ -107,7 +106,7 @@ const EditNotes = () => {
                 <div className="flex gap-3">
                   <button
                     className="bg-blue-500 text-white px-3 py-2 rounded-lg "
-                    onClick={editHandler}
+                   
                   >
                     Edit
                   </button>
