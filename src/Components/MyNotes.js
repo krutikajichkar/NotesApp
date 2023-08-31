@@ -7,9 +7,11 @@ import AccordionDetails from "@mui/material/AccordionDetails";
 import Loader from "./Loader";
 import Error from "./popups/Error";
 import { ReactMarkdown } from "react-markdown/lib/react-markdown";
-import { useSelector } from "react-redux";
-import { collection, doc, getDocs } from "firebase/firestore"; 
-import {db} from '../Firebase'
+import { useDispatch, useSelector } from "react-redux";
+import { collection, doc, getDocs, deleteDoc } from "firebase/firestore";
+import { db } from "../Firebase";
+import { addNotes, editNotes } from "../Redux/notesSlice";
+import { auth } from "../Firebase";
 
 function MyNotes() {
   const [notes, setNotes] = useState([]);
@@ -17,29 +19,46 @@ function MyNotes() {
 
   const [loading, setLoading] = useState(true);
 
-  
-  const user = useSelector(store => store.user);
+  const user = useSelector((store) => store.user);
 
-  const getNotes = async() => {
-     await getDocs(collection(db, "notes")).then((response) => {
-      setNotes(response.docs.map((doc) => ({
-        ...doc.data(), id: doc.id
-    })))
-     })
-  }
+  const dispatch = useDispatch();
+
+  const getNotes = async () => {
+    await getDocs(collection(db, "notes")).then((response) => {
+      const data = response.docs
+        .filter((item) => item.data().uid === auth.currentUser.uid)
+        .map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+      setNotes(data);
+      dispatch(addNotes(data));
+      setLoading(false);
+    })
+    .catch((e) => setFetcherror(e.message))
+  };
+
+  const deleteHandler = async (id) => {
+    const filteredData = notes.filter((note) => note.id !== id);
+    setNotes(filteredData);
+    dispatch(addNotes(filteredData));
+    await deleteDoc(doc(db, "notes", id));
+  };
 
   useEffect(() => {
-    getNotes()
-  } ,[])
+    getNotes();
+    console.log("hey tehert");
+  }, []);
 
   return (
     <>
-      {!loading && <Loader />}
-      {loading && (
+      {loading && <Loader />}
+      {!loading && (
         <MainScreen
-          title={`Welcome Back ${user?.displayName}...`}
+          title={`Hey ${user?.displayName} What are you Planning to do Today?`}
           className="pt-[100px] container"
         >
+          {fetcherror && <Error error={fetcherror}/>}
           <Link to="createnote">
             <button className="bg-cyan-600 text-white p-2 mb-4 rounded font-semibold hover:bg-cyan-800 shadow-slate-900 ">
               Create New Note
@@ -60,13 +79,19 @@ function MyNotes() {
                         <div className="flex justify-between card-header items-center ">
                           <div>{ele.title}</div>
                           <div className="flex space-x-2 ">
-                            <Link to="editnotes">
+                            <Link to="/editnotes">
                               {" "}
-                              <button className="text-white rounded bg-green-600 p-2 font-semibold">
+                              <button
+                                className="text-white rounded bg-green-600 p-2 font-semibold"
+                                onClick={() => dispatch(editNotes(ele.id))}
+                              >
                                 Edit
                               </button>
                             </Link>
-                            <button className="text-white rounded bg-red-600 p-2 font-semibold">
+                            <button
+                              className="text-white rounded bg-red-600 p-2 font-semibold"
+                              onClick={() => deleteHandler(ele.id)}
+                            >
                               Delete
                             </button>
                           </div>

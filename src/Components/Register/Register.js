@@ -7,33 +7,36 @@ import { Link } from "react-router-dom";
 import Error from "../popups/Error";
 import Success from "../popups/Success";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth, storage } from "../../Firebase";
+import { auth } from "../../Firebase";
 import { useDispatch } from "react-redux";
 import { addUser } from "../../Redux/userSlice";
-import { getDownloadURL, uploadBytes, ref } from "firebase/storage";
-
 
 function Register() {
   const email = useRef(null);
   const password = useRef(null);
-  const name = useRef(null);
 
   const [error, setError] = useState();
   const [message, setMessage] = useState();
+  const [name, setName] = useState();
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-   await createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
+    setError(null);
+    setMessage("Creating Your Account , Please Stay with us!!");
+    await createUserWithEmailAndPassword(
+      auth,
+      email.current.value,
+      password.current.value
+    )
       .then((userCredential) => {
-        const user = userCredential.user;
-
         updateProfile(auth.currentUser, {
-          displayName: name.current.value,
+          displayName: name,
         }).then(() => {
           const { uid, email, displayName } = auth.currentUser;
+          console.log(auth.currentUser);
           dispatch(
             addUser({
               uid: uid,
@@ -45,9 +48,8 @@ function Register() {
         });
       })
       .catch((error) => {
-        const errorCode = error.code;
         const errorMessage = error.message;
-        setError(errorCode + errorMessage)
+        setError(errorMessage);
       });
   };
 
@@ -64,7 +66,8 @@ function Register() {
                 required
                 type="text"
                 placeholder="Name"
-                ref={name}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
               />
               <Form.Control.Feedback>Looks good!</Form.Control.Feedback>
             </Form.Group>
@@ -98,7 +101,7 @@ function Register() {
             <div className="mt-2 text-[18px] ">
               {" "}
               Already have an account ?{" "}
-              <Link to="login" className="text-blue-800">
+              <Link to="/login" className="text-blue-800">
                 Login Here
               </Link>
             </div>

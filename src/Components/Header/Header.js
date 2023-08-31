@@ -1,17 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
-import supabase from "../../config/SupabaseClient";
 import Avatar from "@mui/material/Avatar";
 import { auth } from "../../Firebase";
 import { signOut } from "firebase/auth";
 import { useSelector } from "react-redux";
-
-
-
-const timestamp = new Date().getTime();
-const CDN =
-  "https://vipfgltyzdlvkveoojpr.supabase.co/storage/v1/object/public/avatars/";
+import { DEFAULT_PROFILE } from "../../config/constants";
 
 function Header() {
   const navigate = useNavigate();
@@ -21,7 +15,6 @@ function Header() {
   const currentUser = auth.currentUser;
 
   const user = useSelector((store) => store.user);
-
 
   const handleLogout = async () => {
     await signOut(auth)
@@ -33,51 +26,6 @@ function Header() {
       });
   };
 
-  const getUser = async () => {
-    const { data, error } = await supabase.auth.getUser();
-    if (error) {
-      console.log(error.message);
-      return null;
-    }
-    return data?.user;
-  };
-
-  const getMedia = async (id) => {
-    const { data, error } = await supabase.storage
-      .from("avatars")
-      .list(id + "/", {
-        limit: 100,
-        offset: 0,
-        sortBy: { column: "name", order: "asc" },
-      });
-
-    if (data) {
-      console.log(data);
-      setProfile(data);
-      console.log(profile);
-    } else {
-      console.log(error.message);
-    }
-  };
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      const user = await getUser();
-      if (user) {
-        await getMedia(user.id);
-        setId(user.id);
-      }
-      console.log(profile);
-    };
-
-    fetchUser();
-    console.log(CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp);
-  }, [id, profile]);
-
-  const imageUrl =
-    CDN + id + "/" + profile[0]?.name + "?timestamp=" + timestamp;
-  console.log(imageUrl);
-
   return (
     <div className=" shadow-gray-500 ">
       <nav className="bg-cyan-600 h-14 flex items-center p-10 justify-between fixed left-0 right-0 z-50">
@@ -86,18 +34,18 @@ function Header() {
           {/* Large Screen */}
           <div className=" hidden sm:block ">
             <ul className="flex space-x-10 text-xl font-semibold text-white cursor-pointer items-center">
-              
-               { !currentUser && <Link to="/login">
+              {!user && (
+                <Link to="/login">
                   <li>
                     <button className="text-cyan-600 px-4 pt-2 pb-2 rounded-3xl font-semibold bg-white -mr-6">
                       SignIn
                     </button>
                   </li>
-                </Link>}
-              
-              {!currentUser && (
+                </Link>
+              )}
+
+              {!user && (
                 <Link to="/register">
-                
                   <li>
                     <button className="text-cyan-600 px-4 pt-2 pb-2 rounded-3xl font-semibold bg-white ">
                       SignUp
@@ -105,7 +53,7 @@ function Header() {
                   </li>
                 </Link>
               )}
-              {currentUser && (
+              {user && (
                 <Link to="/mynotes">
                   <li className="focus:text-blue-300 hover:text-blue-300">
                     My Notes
@@ -113,7 +61,7 @@ function Header() {
                 </Link>
               )}
 
-              {currentUser && (
+              {user && (
                 <div className="dropdown">
                   <button
                     className=" dropdown-toggle flex items-center"
@@ -123,7 +71,7 @@ function Header() {
                   >
                     <Avatar
                       alt="Profile_img"
-                      src="https://static.vecteezy.com/system/resources/thumbnails/002/318/271/small/user-profile-icon-free-vector.jpg"
+                      src={!user.photoURL ? DEFAULT_PROFILE : user.photoURL}
                     />
                   </button>
                   <ul className="dropdown-menu">

@@ -10,10 +10,9 @@ import ReactMarkdown from "react-markdown";
 import { useNavigate } from "react-router-dom";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../Firebase";
-import {auth} from "../Firebase"
+import { auth } from "../Firebase";
 
 const CreateNote = () => {
-
   const [title, setTitle] = useState();
   const [content, setContent] = useState();
   const [category, setCategory] = useState();
@@ -22,28 +21,27 @@ const CreateNote = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit =  (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
   };
 
   const addNoteshandler = async () => {
-  
-       await addDoc(collection(db, "notes"), {
-        title: title,
-        category: category,
-        content: content,
-        uid : auth.currentUser.uid,
-      }).then(() => {
+    await addDoc(collection(db, "notes"), {
+      title: title,
+      category: category,
+      content: content,
+      uid: auth.currentUser.uid,
+      created_at: new Date().toDateString(),
+    })
+      .then(() => {
+        setfetchError(null);
         setMessage("Notes created Successfully");
-      navigate("/mynotes");
+        navigate("/mynotes");
       })
       .catch((e) => {
-        setfetchError(e.message)
-      })
-      
-      
-    } 
-  
+        setfetchError(e.message);
+      });
+  };
 
   const resetHandler = () => {
     setTitle("");
@@ -60,7 +58,7 @@ const CreateNote = () => {
         <Card>
           <Card.Header>Create a Note</Card.Header>
           <Card.Body>
-            <Form  onSubmit={handleSubmit}>
+            <Form onSubmit={handleSubmit}>
               <Row className="mb-3">
                 <Form.Group className="mb-3" controlId="validationCustom01">
                   <Form.Label>Title</Form.Label>
