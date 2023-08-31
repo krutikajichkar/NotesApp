@@ -147,7 +147,7 @@ function Header() {
                     </li>
 
                     <li>
-                      <Link to="profile">
+                      <Link to="/account">
                         <a className="dropdown-item" href="/">
                           Profile
                         </a>
